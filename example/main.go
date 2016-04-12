@@ -34,9 +34,15 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	for _, result := range m.Result {
 		from := result.Content.From
 
+		// Get User Profile
+		fromUser, err := botClient.GetUserProfiles(from)
+		if err != nil {
+			log.Print(err)
+		}
+		displayName := fromUser.Contacts[0].DisplayName
 		// Send Text
 		text := result.Content.Text
-		sentResult, err := botClient.SendText([]string{from}, text)
+		sentResult, err := botClient.SendText([]string{from}, text+"\n\nBy "+displayName)
 		if err != nil {
 			log.Print(err)
 		}
