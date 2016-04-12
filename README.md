@@ -60,7 +60,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			log.Print(err)
 		}
 		if len(sentResult.Failed) == 0 {
-			fmt.Fprintf(w, "Failed")
+			log.Print("Failed")
 			return
 		}
 
@@ -74,7 +74,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			log.Print(err)
 		}
 		if len(sentResult.Failed) == 0 {
-			fmt.Fprintf(w, "Failed")
+			log.Print("Failed")
 			return
 		}
 
@@ -86,14 +86,14 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			log.Print(err)
 		}
 		if len(sentResult.Failed) == 0 {
-			fmt.Fprintf(w, "Failed")
+			log.Print("Failed")
 			return
 		}
 
 		// Send Video ....
 
 	}
-	fmt.Fprintf(w, "Success")
+	log.Print("Success")
 }
 
 func getProxyURL() *url.URL {
