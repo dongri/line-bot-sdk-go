@@ -53,9 +53,15 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	for _, result := range m.Result {
 		from := result.Content.From
 
+		// Get User Profile
+		fromUser, err := botClient.GetUserProfiles(from)
+		if err != nil {
+			log.Print(err)
+		}
+		displayName := fromUser.Contacts[0].DisplayName
 		// Send Text
 		text := result.Content.Text
-		sentResult, err := botClient.SendText([]string{from}, text)
+		sentResult, err := botClient.SendText([]string{from}, text+"\n\nBy "+displayName)
 		if err != nil {
 			log.Print(err)
 		}
@@ -65,11 +71,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Send Sticker
-		metadata := new(line.ContentMetadata)
-		metadata.STKID = "2"
-		metadata.STKPKGID = "1"
-		metadata.STKVER = "100"
-		sentResult, err = botClient.SendSticker([]string{from}, *metadata)
+		STKID := "2"
+		STKPKGID := "1"
+		STKVER := "100"
+		STKTXT := "Text"
+		sentResult, err = botClient.SendSticker([]string{from}, STKID, STKPKGID, STKVER, STKTXT)
 		if err != nil {
 			log.Print(err)
 		}
@@ -79,9 +85,9 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Send Image
-		originalContentURL := "https://upload.wikimedia.org/wikipedia/commons/5/5e/Line_logo.png"
-		previewImageURL := "http://i.imgur.com/Aaso4sY.png"
-		sentResult, err = botClient.SendImage([]string{from}, originalContentURL, previewImageURL)
+		imageOriginalContentURL := "https://example.com/test_original.png"
+		imagePreviewImageURL := "https://example.com/test_preview.png"
+		sentResult, err = botClient.SendImage([]string{from}, imageOriginalContentURL, imagePreviewImageURL)
 		if err != nil {
 			log.Print(err)
 		}
@@ -91,6 +97,38 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Send Video ....
+		videoOriginalContentURL := "https://example.com/test.mp4"
+		videoPreviewImageURL := "http://example.com/test.png"
+		sentResult, err = botClient.SendVideo([]string{from}, videoOriginalContentURL, videoPreviewImageURL)
+		if err != nil {
+			log.Print(err)
+		}
+		if len(sentResult.Failed) == 0 {
+			log.Print("Failed")
+			return
+		}
+
+		// Send Audio ....
+		audioOriginalContentURL := "https://example.com/test.mp3"
+		audlen := "240000"
+		sentResult, err = botClient.SendAudio([]string{from}, audioOriginalContentURL, audlen)
+		if err != nil {
+			log.Print(err)
+		}
+		if len(sentResult.Failed) == 0 {
+			log.Print("Failed")
+			return
+		}
+
+		// Send Contact ....
+		sentResult, err = botClient.SendContact([]string{from}, from, displayName)
+		if err != nil {
+			log.Print(err)
+		}
+		if len(sentResult.Failed) == 0 {
+			log.Print("Failed")
+			return
+		}
 
 	}
 	log.Print("Success")
