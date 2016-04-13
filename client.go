@@ -69,15 +69,6 @@ func (c *Client) SendText(to []string, text string) (*SentResult, error) {
 	return c.sendMessage(to, *content)
 }
 
-// SendSticker ...
-func (c *Client) SendSticker(to []string, metadata ContentMetadata) (*SentResult, error) {
-	content := new(Content)
-	content.ContentType = ContentTypeSticker
-	content.ToType = ToTypeUser
-	content.ContentMetadata = metadata
-	return c.sendMessage(to, *content)
-}
-
 // SendImage ...
 func (c *Client) SendImage(to []string, originalContentURL, previewImageURL string) (*SentResult, error) {
 	content := new(Content)
@@ -95,6 +86,56 @@ func (c *Client) SendVideo(to []string, originalContentURL, previewImageURL stri
 	content.ToType = ToTypeUser
 	content.OriginalContentURL = originalContentURL
 	content.PreviewImageURL = previewImageURL
+	return c.sendMessage(to, *content)
+}
+
+// SendAudio ...
+func (c *Client) SendAudio(to []string, originalContentURL, audlen string) (*SentResult, error) {
+	content := new(Content)
+	content.ContentType = ContentTypeVideo
+	content.ToType = ToTypeUser
+	content.OriginalContentURL = originalContentURL
+	metadata := new(ContentMetadata)
+	metadata.AUDLEN = audlen
+	content.ContentMetadata = *metadata
+	return c.sendMessage(to, *content)
+}
+
+// SendLocation ...
+func (c *Client) SendLocation(to []string, address string, latitude, longitude float64, title string) (*SentResult, error) {
+	content := new(Content)
+	content.ContentType = ContentTypeLocation
+	content.ToType = ToTypeUser
+	content.Location.Address = address
+	content.Location.Latitude = latitude
+	content.Location.Longitude = longitude
+	content.Location.Title = title
+	return c.sendMessage(to, *content)
+}
+
+// SendSticker ...
+func (c *Client) SendSticker(to []string, stkID, stkpkgID, stkVer, stkTxt string) (*SentResult, error) {
+	content := new(Content)
+	content.ContentType = ContentTypeSticker
+	content.ToType = ToTypeUser
+	metadata := new(ContentMetadata)
+	metadata.STKID = stkID
+	metadata.STKPKGID = stkpkgID
+	metadata.STKVER = stkVer
+	metadata.STKTXT = stkTxt
+	content.ContentMetadata = *metadata
+	return c.sendMessage(to, *content)
+}
+
+// SendContact ...
+func (c *Client) SendContact(to []string, mid, displayName string) (*SentResult, error) {
+	content := new(Content)
+	content.ContentType = ContentTypeSticker
+	content.ToType = ToTypeUser
+	metadata := new(ContentMetadata)
+	metadata.MID = mid
+	metadata.DisplayName = displayName
+	content.ContentMetadata = *metadata
 	return c.sendMessage(to, *content)
 }
 

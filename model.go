@@ -55,6 +55,7 @@ type ContentMetadata struct {
 	STKTXT      string `json:"STKTXT"`
 	MID         string `json:"mid"`
 	DisplayName string `json:"displayName"`
+	AUDLEN      string `json:"AUDLEN"`
 }
 
 // UserProfiles ...
