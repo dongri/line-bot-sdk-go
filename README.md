@@ -46,12 +46,20 @@ func main() {
 }
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
-	m, err := botClient.ReceiveMessage(r.Body)
+	m, err := botClient.ReceiveMessageAndOperation(r.Body)
 	if err != nil {
 		log.Print(err)
 	}
 	for _, result := range m.Result {
 		from := result.Content.From
+
+		if result.Content.OpType == line.OpTypeAdded {
+			log.Print("Added as friend")
+		}
+
+		if result.Content.OpType == line.OpTypeBlocked {
+			log.Print("Blocked account")
+		}
 
 		// Get User Profile
 		fromUser, err := botClient.GetUserProfiles(from)

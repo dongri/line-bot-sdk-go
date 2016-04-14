@@ -1,5 +1,12 @@
 package line
 
+// Fixed
+const (
+	FixedToChannel         = 1383378250
+	FixedEventTypeSingle   = "138311608800106203"
+	FixedEventTypeMultiple = "140177271400161403"
+)
+
 // ReceivedMessage ...
 type ReceivedMessage struct {
 	Result []Result `json:"result"`
@@ -37,6 +44,9 @@ type Content struct {
 	ContentMetadata    ContentMetadata `json:"contentMetadata"`
 	OriginalContentURL string          `json:"originalContentUrl"`
 	PreviewImageURL    string          `json:"previewImageUrl"`
+	Params             []string        `json:"params"`
+	Revision           int             `json:"revision"`
+	OpType             int             `json:"opType"`
 }
 
 // Location ...
@@ -99,21 +109,4 @@ type SentResult struct {
 	MessageID string
 	Timestamp int64
 	Version   int
-}
-
-// MessageContent ...
-type MessageContent struct {
-	Result []ContentResult `json:"result"`
-}
-
-// ContentResult ...
-type ContentResult struct {
-	Content     Content  `json:"content"`
-	From        string   `json:"from"`
-	FromChannel int      `json:"fromChannel"`
-	To          []string `json:"to"`
-	ToChannel   int      `json:"toChannel"`
-	EventType   string   `json:"eventType"`
-	CreatedTime int      `json:"createdTime"`
-	ID          string   `json:"id"`
 }

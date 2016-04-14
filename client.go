@@ -21,10 +21,7 @@ type Client struct {
 
 // Fixed ...
 const (
-	EndPoint               = "https://trialbot-api.line.me"
-	FixedToChannel         = 1383378250
-	FixedEventTypeSingle   = "138311608800106203"
-	FixedEventTypeMultiple = "140177271400161403"
+	EndPoint = "https://trialbot-api.line.me"
 )
 
 // ContentType ....
@@ -42,6 +39,12 @@ const (
 // ToType
 const (
 	ToTypeUser int = iota + 1
+)
+
+// OpType
+const (
+	OpTypeAdded   = 4
+	OpTypeBlocked = 8
 )
 
 // API URLs
@@ -179,8 +182,8 @@ func (c *Client) SendSingleMessage(to []string, content Content) (*SentResult, e
 	return c.sendMessage(apiURL, singleMessage)
 }
 
-// GettingMessageContent ...
-func (c *Client) GettingMessageContent(messageID string) (*MessageContent, error) {
+// GetMessageContent ...
+func (c *Client) GetMessageContent(messageID string) ([]byte, error) {
 	apiURL := c.endpoint + URLGetMessageContent + "/" + messageID + "/content"
 	req, err := http.NewRequest("GET", apiURL, nil)
 	if err != nil {
@@ -188,18 +191,11 @@ func (c *Client) GettingMessageContent(messageID string) (*MessageContent, error
 	}
 	req = c.setHeader(req)
 	body, err := DoRequest(req, c.proxyURL)
-	if err != nil {
-		return nil, err
-	}
-	var messageContent MessageContent
-	if err = json.Unmarshal(body, &messageContent); err != nil {
-		return nil, err
-	}
-	return &messageContent, nil
+	return body, err
 }
 
-// GettingMessageContentPreview ...
-func (c *Client) GettingMessageContentPreview(messageID string) (*MessageContent, error) {
+// GetMessageContentPreview ...
+func (c *Client) GetMessageContentPreview(messageID string) ([]byte, error) {
 	apiURL := c.endpoint + URLGetMessageContent + "/" + messageID + "/content/preview"
 	req, err := http.NewRequest("GET", apiURL, nil)
 	if err != nil {
@@ -207,14 +203,7 @@ func (c *Client) GettingMessageContentPreview(messageID string) (*MessageContent
 	}
 	req = c.setHeader(req)
 	body, err := DoRequest(req, c.proxyURL)
-	if err != nil {
-		return nil, err
-	}
-	var messageContent MessageContent
-	if err = json.Unmarshal(body, &messageContent); err != nil {
-		return nil, err
-	}
-	return &messageContent, nil
+	return body, err
 }
 
 // GetUserProfiles ... mids is String (comma-separated)
@@ -239,8 +228,8 @@ func (c *Client) GetUserProfiles(mids string) (*UserProfiles, error) {
 	return &profiles, nil
 }
 
-// ReceiveMessage ...
-func (c *Client) ReceiveMessage(body io.Reader) (*ReceivedMessage, error) {
+// ReceiveMessageAndOperation ...
+func (c *Client) ReceiveMessageAndOperation(body io.Reader) (*ReceivedMessage, error) {
 	var receivedMessage ReceivedMessage
 	b, err := ioutil.ReadAll(body)
 	if err != nil {
