@@ -141,7 +141,7 @@ func (c *Client) SendContact(to []string, mid, displayName string) (*SentResult,
 }
 
 // SendRichMessage ...
-func (c *Client) SendRichMessage(to []string, downloadURL string, altText string, canvasJSON string) (*SentResult, error) {
+func (c *Client) SendRichMessage(to []string, downloadURL string, altText string, markupJSON string) (*SentResult, error) {
 	content := new(Content)
 	content.ContentType = ContentTypeRich
 	content.ToType = ToTypeUser
@@ -149,7 +149,7 @@ func (c *Client) SendRichMessage(to []string, downloadURL string, altText string
 	metadata.DOWNLOADURL = downloadURL
 	metadata.SPECREV = "1"
 	metadata.ALTTEXT = altText
-	metadata.MARKUPJSON = canvasJSON
+	metadata.MARKUPJSON = markupJSON
 	content.ContentMetadata = *metadata
 	return c.sendMessage(to, *content)
 }
