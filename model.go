@@ -100,3 +100,15 @@ type SentResult struct {
 	Timestamp int64
 	Version   int
 }
+
+// MessageContent ...
+type MessageContent struct {
+	Content     Content  `json:"content"`
+	From        string   `json:"from"`
+	FromChannel int      `json:"fromChannel"`
+	To          []string `json:"to"`
+	ToChannel   int      `json:"toChannel"`
+	EventType   string   `json:"eventType"`
+	CreatedTime int      `json:"createdTime"`
+	ID          string   `json:"id"`
+}

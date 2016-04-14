@@ -46,8 +46,9 @@ const (
 
 // API URLs
 const (
-	URLSendMessage = "/v1/events"
-	URLUserProfile = "/v1/profiles"
+	URLSendMessage       = "/v1/events"
+	URLUserProfile       = "/v1/profiles"
+	URLGetMessageContent = "/v1/bot/message"
 )
 
 // NewClient ...
@@ -176,6 +177,44 @@ func (c *Client) SendSingleMessage(to []string, content Content) (*SentResult, e
 	singleMessage.Content = content
 	apiURL := c.endpoint + URLSendMessage
 	return c.sendMessage(apiURL, singleMessage)
+}
+
+// GettingMessageContent ...
+func (c *Client) GettingMessageContent(messageID string) (*MessageContent, error) {
+	apiURL := c.endpoint + URLGetMessageContent + "/" + messageID + "/content"
+	req, err := http.NewRequest("GET", apiURL, nil)
+	if err != nil {
+		return nil, err
+	}
+	req = c.setHeader(req)
+	body, err := DoRequest(req, c.proxyURL)
+	if err != nil {
+		return nil, err
+	}
+	var messageContent MessageContent
+	if err = json.Unmarshal(body, &messageContent); err != nil {
+		return nil, err
+	}
+	return &messageContent, nil
+}
+
+// GettingMessageContentPreview ...
+func (c *Client) GettingMessageContentPreview(messageID string) (*MessageContent, error) {
+	apiURL := c.endpoint + URLGetMessageContent + "/" + messageID + "/content/preview"
+	req, err := http.NewRequest("GET", apiURL, nil)
+	if err != nil {
+		return nil, err
+	}
+	req = c.setHeader(req)
+	body, err := DoRequest(req, c.proxyURL)
+	if err != nil {
+		return nil, err
+	}
+	var messageContent MessageContent
+	if err = json.Unmarshal(body, &messageContent); err != nil {
+		return nil, err
+	}
+	return &messageContent, nil
 }
 
 // GetUserProfiles ... mids is String (comma-separated)
