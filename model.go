@@ -16,8 +16,8 @@ type Result struct {
 	Content     Content  `json:"content"`
 }
 
-// SendMessage ..
-type SendMessage struct {
+// SingleMessage ..
+type SingleMessage struct {
 	To        []string `json:"to"`
 	ToChannel int      `json:"toChannel"`
 	EventType string   `json:"eventType"`
@@ -77,6 +77,20 @@ type Profile struct {
 	MID           string `json:"mid"`
 	PictureURL    string `json:"pictureUrl"`
 	StatusMessage string `json:"statusMessage"`
+}
+
+// MultipleMessage ...
+type MultipleMessage struct {
+	To        []string        `json:"to"`
+	ToChannel int             `json:"toChannel"`
+	EventType string          `json:"eventType"`
+	Content   MultipleContent `json:"content"`
+}
+
+// MultipleContent ...
+type MultipleContent struct {
+	MessageNotified int       `json:"messageNotified"`
+	Messages        []Content `json:"messages"`
 }
 
 // SentResult ...

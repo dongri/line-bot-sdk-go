@@ -67,7 +67,7 @@ func (c *Client) SendText(to []string, text string) (*SentResult, error) {
 	content.ContentType = ContentTypeText
 	content.ToType = ToTypeUser
 	content.Text = text
-	return c.sendMessage(to, *content)
+	return c.SendSingleMessage(to, *content)
 }
 
 // SendImage ...
@@ -77,7 +77,7 @@ func (c *Client) SendImage(to []string, originalContentURL, previewImageURL stri
 	content.ToType = ToTypeUser
 	content.OriginalContentURL = originalContentURL
 	content.PreviewImageURL = previewImageURL
-	return c.sendMessage(to, *content)
+	return c.SendSingleMessage(to, *content)
 }
 
 // SendVideo ...
@@ -87,7 +87,7 @@ func (c *Client) SendVideo(to []string, originalContentURL, previewImageURL stri
 	content.ToType = ToTypeUser
 	content.OriginalContentURL = originalContentURL
 	content.PreviewImageURL = previewImageURL
-	return c.sendMessage(to, *content)
+	return c.SendSingleMessage(to, *content)
 }
 
 // SendAudio ...
@@ -99,7 +99,7 @@ func (c *Client) SendAudio(to []string, originalContentURL, audlen string) (*Sen
 	metadata := new(ContentMetadata)
 	metadata.AUDLEN = audlen
 	content.ContentMetadata = *metadata
-	return c.sendMessage(to, *content)
+	return c.SendSingleMessage(to, *content)
 }
 
 // SendLocation ...
@@ -111,7 +111,7 @@ func (c *Client) SendLocation(to []string, address string, latitude, longitude f
 	content.Location.Latitude = latitude
 	content.Location.Longitude = longitude
 	content.Location.Title = title
-	return c.sendMessage(to, *content)
+	return c.SendSingleMessage(to, *content)
 }
 
 // SendSticker ...
@@ -125,7 +125,7 @@ func (c *Client) SendSticker(to []string, stkID, stkpkgID, stkVer, stkTxt string
 	metadata.STKVER = stkVer
 	metadata.STKTXT = stkTxt
 	content.ContentMetadata = *metadata
-	return c.sendMessage(to, *content)
+	return c.SendSingleMessage(to, *content)
 }
 
 // SendContact ...
@@ -137,7 +137,7 @@ func (c *Client) SendContact(to []string, mid, displayName string) (*SentResult,
 	metadata.MID = mid
 	metadata.DisplayName = displayName
 	content.ContentMetadata = *metadata
-	return c.sendMessage(to, *content)
+	return c.SendSingleMessage(to, *content)
 }
 
 // SendRichMessage ...
@@ -147,40 +147,35 @@ func (c *Client) SendRichMessage(to []string, downloadURL string, altText string
 	content.ToType = ToTypeUser
 	metadata := new(ContentMetadata)
 	metadata.DOWNLOADURL = downloadURL
-	metadata.SPECREV = "1"
+	metadata.SPECREV = "1" //Fixed
 	metadata.ALTTEXT = altText
 	metadata.MARKUPJSON = markupJSON
 	content.ContentMetadata = *metadata
-	return c.sendMessage(to, *content)
+	return c.SendSingleMessage(to, *content)
 }
 
-// SendMessage ...
-func (c *Client) sendMessage(to []string, content Content) (*SentResult, error) {
+// SendMultipleMessage ...
+func (c *Client) SendMultipleMessage(to []string, messageNotified int, content []Content) (*SentResult, error) {
+	multipleMessage := new(MultipleMessage)
+	multipleMessage.To = to
+	multipleMessage.ToChannel = FixedToChannel
+	multipleMessage.EventType = FixedEventTypeMultiple
+	multipleContent := new(MultipleContent)
+	multipleContent.MessageNotified = messageNotified
+	multipleContent.Messages = content
 	apiURL := c.endpoint + URLSendMessage
-	m := new(SendMessage)
-	m.To = to
-	m.ToChannel = FixedToChannel
-	m.EventType = FixedEventTypeSingle
-	m.Content = content
-	b, err := json.Marshal(m)
-	if err != nil {
-		return nil, err
-	}
-	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(b))
-	if err != nil {
-		return nil, err
-	}
-	req = c.setHeader(req)
-	body, err := DoRequest(req, c.proxyURL)
-	if err != nil {
-		return nil, err
-	}
-	var result SentResult
-	if err := json.Unmarshal(body, &result); err != nil {
-		return nil, err
-	}
-	log.Print(result)
-	return &result, nil
+	return c.sendMessage(apiURL, multipleMessage)
+}
+
+// SendSingleMessage ...
+func (c *Client) SendSingleMessage(to []string, content Content) (*SentResult, error) {
+	singleMessage := new(SingleMessage)
+	singleMessage.To = to
+	singleMessage.ToChannel = FixedToChannel
+	singleMessage.EventType = FixedEventTypeSingle
+	singleMessage.Content = content
+	apiURL := c.endpoint + URLSendMessage
+	return c.sendMessage(apiURL, singleMessage)
 }
 
 // GetUserProfiles ... mids is String (comma-separated)
@@ -225,4 +220,26 @@ func (c *Client) setHeader(req *http.Request) *http.Request {
 	req.Header.Add("X-Line-ChannelSecret", c.channelSecret)
 	req.Header.Add("X-Line-Trusted-User-With-ACL", c.mID)
 	return req
+}
+
+func (c *Client) sendMessage(apiURL string, message interface{}) (*SentResult, error) {
+	b, err := json.Marshal(message)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(b))
+	if err != nil {
+		return nil, err
+	}
+	req = c.setHeader(req)
+	body, err := DoRequest(req, c.proxyURL)
+	if err != nil {
+		return nil, err
+	}
+	var result SentResult
+	if err := json.Unmarshal(body, &result); err != nil {
+		return nil, err
+	}
+	log.Print(result)
+	return &result, nil
 }
