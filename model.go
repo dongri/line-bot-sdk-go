@@ -56,6 +56,10 @@ type ContentMetadata struct {
 	MID         string `json:"mid"`
 	DisplayName string `json:"displayName"`
 	AUDLEN      string `json:"AUDLEN"`
+	DOWNLOADURL string `json:"DOWNLOAD_URL"`
+	SPECREV     string `json:"SPEC_REV"`
+	ALTTEXT     string `json:"ALT_TEXT"`
+	MARKUPJSON  string `json:"MARKUP_JSON"`
 }
 
 // UserProfiles ...

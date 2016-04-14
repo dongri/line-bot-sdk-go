@@ -36,6 +36,7 @@ const (
 	ContentTypeLocation = 7
 	ContentTypeSticker  = 8
 	ContentTypeContact  = 10
+	ContentTypeRich     = 12
 )
 
 // ToType
@@ -135,6 +136,20 @@ func (c *Client) SendContact(to []string, mid, displayName string) (*SentResult,
 	metadata := new(ContentMetadata)
 	metadata.MID = mid
 	metadata.DisplayName = displayName
+	content.ContentMetadata = *metadata
+	return c.sendMessage(to, *content)
+}
+
+// SendRichMessage ...
+func (c *Client) SendRichMessage(to []string, mid, downloadURL string, altText string, canvasJSON string) (*SentResult, error) {
+	content := new(Content)
+	content.ContentType = ContentTypeRich
+	content.ToType = ToTypeUser
+	metadata := new(ContentMetadata)
+	metadata.DOWNLOADURL = downloadURL
+	metadata.SPECREV = "1"
+	metadata.ALTTEXT = altText
+	metadata.MARKUPJSON = canvasJSON
 	content.ContentMetadata = *metadata
 	return c.sendMessage(to, *content)
 }
