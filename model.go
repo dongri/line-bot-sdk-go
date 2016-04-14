@@ -103,6 +103,11 @@ type SentResult struct {
 
 // MessageContent ...
 type MessageContent struct {
+	Result []ContentResult `json:"result"`
+}
+
+// ContentResult ...
+type ContentResult struct {
 	Content     Content  `json:"content"`
 	From        string   `json:"from"`
 	FromChannel int      `json:"fromChannel"`
