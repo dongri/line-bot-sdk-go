@@ -141,7 +141,7 @@ func (c *Client) SendContact(to []string, mid, displayName string) (*SentResult,
 }
 
 // SendRichMessage ...
-func (c *Client) SendRichMessage(to []string, mid, downloadURL string, altText string, canvasJSON string) (*SentResult, error) {
+func (c *Client) SendRichMessage(to []string, downloadURL string, altText string, canvasJSON string) (*SentResult, error) {
 	content := new(Content)
 	content.ContentType = ContentTypeRich
 	content.ToType = ToTypeUser
