@@ -5,13 +5,13 @@
 1. Download and install it:
 
 ```go
-$ go get github.com/dongri/line-bot-client
+$ go get github.com/dongri/LineBot
 ```
 
 2. Import it in your code:
 
 ```go
-$ import line "github.com/dongri/line-bot-client"
+$ import line "github.com/dongri/LineBot"
 ```
 
 # Examples
