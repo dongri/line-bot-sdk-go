@@ -1,4 +1,4 @@
-package line
+package LineBot
 
 // Fixed
 const (

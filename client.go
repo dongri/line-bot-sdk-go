@@ -1,4 +1,4 @@
-package line
+package LineBot
 
 import (
 	"bytes"
@@ -19,7 +19,7 @@ type Client struct {
 	proxyURL      *url.URL
 }
 
-// Fixed ...
+// LIEN Const ...
 const (
 	EndPoint = "https://trialbot-api.line.me"
 )
@@ -49,10 +49,12 @@ const (
 
 // API URLs
 const (
-	URLSendMessage       = "/v1/events"
-	URLUserProfile       = "/v1/profiles"
-	URLGetMessageContent = "/v1/bot/message"
+	URLSendMessage    = "/v1/events"
+	URLUserProfile    = "/v1/profiles"
+	URLMessageContent = "/v1/bot/message"
 )
+
+var eventHandler EventHandler
 
 // NewClient ...
 func NewClient(endpoint, channelID, channelSecret, mid string, proxyURL *url.URL) *Client {
@@ -63,6 +65,11 @@ func NewClient(endpoint, channelID, channelSecret, mid string, proxyURL *url.URL
 		mID:           mid,
 		proxyURL:      proxyURL,
 	}
+}
+
+// SetEventHandler ...
+func (c *Client) SetEventHandler(evnt EventHandler) {
+	eventHandler = evnt
 }
 
 // SendText ...
@@ -184,7 +191,7 @@ func (c *Client) SendSingleMessage(to []string, content Content) (*SentResult, e
 
 // GetMessageContent ...
 func (c *Client) GetMessageContent(messageID string) ([]byte, error) {
-	apiURL := c.endpoint + URLGetMessageContent + "/" + messageID + "/content"
+	apiURL := c.endpoint + URLMessageContent + "/" + messageID + "/content"
 	req, err := http.NewRequest("GET", apiURL, nil)
 	if err != nil {
 		return nil, err
@@ -196,7 +203,7 @@ func (c *Client) GetMessageContent(messageID string) ([]byte, error) {
 
 // GetMessageContentPreview ...
 func (c *Client) GetMessageContentPreview(messageID string) ([]byte, error) {
-	apiURL := c.endpoint + URLGetMessageContent + "/" + messageID + "/content/preview"
+	apiURL := c.endpoint + URLMessageContent + "/" + messageID + "/content/preview"
 	req, err := http.NewRequest("GET", apiURL, nil)
 	if err != nil {
 		return nil, err
