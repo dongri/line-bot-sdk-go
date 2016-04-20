@@ -1,20 +1,20 @@
 # The LINE bot SDK for Go (Golang)
 
-# Start using it
+## Start using it
 
 * Download and install it:
 
 ```go
-$ go get github.com/dongri/LineBot
+$ go get github.com/dongri/line-bot-sdk-go
 ```
 
 * Import it in your code:
 
 ```go
-$ import line "github.com/dongri/LineBot"
+$ import line "github.com/dongri/line-bot-sdk-go"
 ```
 
-# Examples
+## Examples
 
 ```go
 package main
@@ -90,10 +90,6 @@ func (be *BotEventHandler) OnTextMessage(from, text string) {
 // OnImageMessage ...
 func (be *BotEventHandler) OnImageMessage(from string) {
 	log.Print("=== Received Image ===")
-	// SendImage
-	originalContentURL := "http://weknowyourdreamz.com/image.php?pic=/images/robot/robot-03.jpg"
-	previewImageURL := "http://weknowyourdreamz.com/image.php?pic=/images/robot/robot-03.jpg"
-	botClient.SendImage([]string{from}, originalContentURL, previewImageURL)
 }
 
 // OnVideoMessage ...
@@ -114,12 +110,6 @@ func (be *BotEventHandler) OnLocationMessage(from, title, address string, latitu
 // OnStickerMessage ...
 func (be *BotEventHandler) OnStickerMessage(from, stickerPackageID, stickerID, stickerVersion, stickerText string) {
 	log.Print("=== Received Sticker ===")
-	// Send Random Sticker
-	r := rand.Intn(10) + 1
-	stkID := strconv.Itoa(r)
-	stkpkgID := "1"
-	stkVer := "100"
-	botClient.SendSticker([]string{from}, stkID, stkpkgID, stkVer, "hoge")
 }
 
 // OnContactMessage ...
@@ -128,7 +118,7 @@ func (be *BotEventHandler) OnContactMessage(from, MID, displayName string) {
 }
 ```
 
-### Get user Profile
+#### Get user Profile
 
 ```go
 fromUser, err := botClient.GetUserProfiles(from)
@@ -138,21 +128,29 @@ if err != nil {
 displayName := fromUser.Contacts[0].DisplayName
 ```
 
-### Send Text
+#### Send Text
 
 ```go
 botClient.SendText([]string{from}, "Hello!")
 ```
 
-### Send Video
+#### Send Image
 
 ```go
-videoOriginalContentURL := "https://example.com/test.mp4"
-videoPreviewImageURL := "http://example.com/test.png"
+originalContentURL := "http://example.com//robot_original.jpg"
+previewImageURL := "http://example.com//robot_preview.jpg"
+botClient.SendImage([]string{from}, originalContentURL, previewImageURL)
+```
+
+#### Send Video
+
+```go
+videoOriginalContentURL := "https://example.com/video.mp4"
+videoPreviewImageURL := "http://example.com/video.png"
 botClient.SendVideo([]string{from}, videoOriginalContentURL, videoPreviewImageURL)
 ```
 
-### Send Audio
+#### Send Audio
 
 ```go
 audioOriginalContentURL := "https://example.com/test.mp3"
@@ -160,13 +158,33 @@ audlen := "240000"
 botClient.SendAudio([]string{from}, audioOriginalContentURL, audlen)
 ```
 
-### Send Contact
+#### Send Location
+
+```go
+address := "Minato-ku, Tokyo 107-0062"
+latitude := 35.665525
+longitude := 139.717945
+title := "俺んち"
+botClient.SendLocation([]string{from}, address, latitude, longitude, title)
+```
+
+### Send Sticker
+
+```go
+stkID := "2"
+stkpkgID := "1"
+stkVer := "100"
+stkText := "happy"
+botClient.SendSticker([]string{from}, stkID, stkpkgID, stkVer, stkText)
+```
+
+#### Send Contact
 
 ```go
 botClient.SendContact([]string{from}, from, displayName)
 ```
 
-### Send Rich Message
+#### Send Rich Message
 
 ```go
 func getMarkupJSON() string {
@@ -179,8 +197,7 @@ markupJSON := getMarkupJSON()
 botClient.SendRichMessage([]string{from}, downloadURL, altText, markupJSON)
 ```
 
-
-### Send MultipleMessage
+#### Send MultipleMessage
 
 ```go
 messageNotified := 0
