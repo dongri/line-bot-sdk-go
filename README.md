@@ -168,7 +168,7 @@ title := "俺んち"
 botClient.SendLocation([]string{from}, address, latitude, longitude, title)
 ```
 
-### Send Sticker
+#### Send Sticker
 
 ```go
 stkID := "2"
