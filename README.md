@@ -1,14 +1,14 @@
-# LINE Bot Client for Golang
+# The LINE bot SDK for Go (Golang)
 
 # Start using it
 
-1. Download and install it:
+* Download and install it:
 
 ```go
 $ go get github.com/dongri/LineBot
 ```
 
-2. Import it in your code:
+* Import it in your code:
 
 ```go
 $ import line "github.com/dongri/LineBot"
