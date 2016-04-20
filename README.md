@@ -28,7 +28,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/dongri/LineBot"
+	"github.com/dongri/line-bot-sdk-go"
 )
 
 var botClient *LineBot.Client
