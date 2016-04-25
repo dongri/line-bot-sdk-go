@@ -3,16 +3,14 @@ package main
 import (
 	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
 	"net/url"
 	"os"
-	"strconv"
 
 	"github.com/dongri/line-bot-sdk-go"
 )
 
-var botClient *LineBot.Client
+var botClient *linebot.Client
 
 func main() {
 	channelID := os.Getenv("LINE_CHANNEL_ID")
@@ -20,10 +18,10 @@ func main() {
 	mid := os.Getenv("LINE_MID")
 	proxyURL := getProxyURL() // can set nil if not need
 
-	botClient = LineBot.NewClient(LineBot.EndPoint, channelID, channelSecret, mid, proxyURL)
+	botClient = linebot.NewClient(linebot.EndPoint, channelID, channelSecret, mid, proxyURL)
 
 	// EventHandler
-	var myEvent LineBot.EventHandler = NewEventHandler()
+	var myEvent linebot.EventHandler = NewEventHandler()
 	botClient.SetEventHandler(myEvent)
 
 	http.HandleFunc("/callback", callbackHandler)
@@ -71,10 +69,6 @@ func (be *BotEventHandler) OnTextMessage(from, text string) {
 // OnImageMessage ...
 func (be *BotEventHandler) OnImageMessage(from string) {
 	log.Print("=== Received Image ===")
-	// SendImage
-	originalContentURL := "http://weknowyourdreamz.com/image.php?pic=/images/robot/robot-03.jpg"
-	previewImageURL := "http://weknowyourdreamz.com/image.php?pic=/images/robot/robot-03.jpg"
-	botClient.SendImage([]string{from}, originalContentURL, previewImageURL)
 }
 
 // OnVideoMessage ...
@@ -95,12 +89,6 @@ func (be *BotEventHandler) OnLocationMessage(from, title, address string, latitu
 // OnStickerMessage ...
 func (be *BotEventHandler) OnStickerMessage(from, stickerPackageID, stickerID, stickerVersion, stickerText string) {
 	log.Print("=== Received Sticker ===")
-	// Send Random Sticker
-	r := rand.Intn(10) + 1
-	stkID := strconv.Itoa(r)
-	stkpkgID := "1"
-	stkVer := "100"
-	botClient.SendSticker([]string{from}, stkID, stkpkgID, stkVer, "hoge")
 }
 
 // OnContactMessage ...
