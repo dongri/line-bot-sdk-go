@@ -11,7 +11,7 @@ $ go get github.com/dongri/line-bot-sdk-go
 * Import it in your code:
 
 ```go
-$ import line "github.com/dongri/line-bot-sdk-go"
+$ import linebot "github.com/dongri/line-bot-sdk-go"
 ```
 
 ## Examples
@@ -22,16 +22,14 @@ package main
 import (
 	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
 	"net/url"
 	"os"
-	"strconv"
 
-	LineBot "github.com/dongri/line-bot-sdk-go"
+	linebot "github.com/dongri/line-bot-sdk-go"
 )
 
-var botClient *LineBot.Client
+var botClient *linebot.Client
 
 func main() {
 	channelID := os.Getenv("LINE_CHANNEL_ID")
@@ -39,10 +37,10 @@ func main() {
 	mid := os.Getenv("LINE_MID")
 	proxyURL := getProxyURL() // can set nil if not need
 
-	botClient = LineBot.NewClient(LineBot.EndPoint, channelID, channelSecret, mid, proxyURL)
+	botClient = linebot.NewClient(linebot.EndPoint, channelID, channelSecret, mid, proxyURL)
 
 	// EventHandler
-	var myEvent LineBot.EventHandler = NewEventHandler()
+	var myEvent linebot.EventHandler = NewEventHandler()
 	botClient.SetEventHandler(myEvent)
 
 	http.HandleFunc("/callback", callbackHandler)
