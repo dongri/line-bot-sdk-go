@@ -11,7 +11,7 @@ $ go get github.com/dongri/line-bot-sdk-go
 * Import it in your code:
 
 ```go
-$ import linebot "github.com/dongri/line-bot-sdk-go"
+$ import "github.com/dongri/line-bot-sdk-go/linebot"
 ```
 
 ## Examples
@@ -26,7 +26,7 @@ import (
 	"net/url"
 	"os"
 
-	linebot "github.com/dongri/line-bot-sdk-go"
+	"github.com/dongri/line-bot-sdk-go/linebot"
 )
 
 var botClient *linebot.Client
@@ -37,7 +37,7 @@ func main() {
 	mid := os.Getenv("LINE_MID")
 	proxyURL := getProxyURL() // can set nil if not need
 
-	botClient = linebot.NewClient(linebot.EndPoint, channelID, channelSecret, mid, proxyURL)
+	botClient = linebot.NewClient(channelID, channelSecret, mid, proxyURL)
 
 	// EventHandler
 	var myEvent linebot.EventHandler = NewEventHandler()
@@ -82,7 +82,7 @@ func (be *BotEventHandler) OnBlockedAccountOperation(mids []string) {
 
 // OnTextMessage ...
 func (be *BotEventHandler) OnTextMessage(from, text string) {
-	botClient.SendText([]string{from}, text)
+	log.Print("=== Received Text ===")
 }
 
 // OnImageMessage ...
@@ -208,4 +208,13 @@ imageContent := new(line.Content)
 imageContent.OriginalContentURL = "https://farm1.staticflickr.com/715/22658699705_7591e8d0a6_b.jpg"
 contents = append(contents, *imageContent)
 botClient.SendMultipleMessage([]string{from}, messageNotified, contents)
+```
+
+## Util
+
+#### URLShortener
+
+```go
+shortURL := linebot.URLShortener("APIKEY", "https://map.google.com/********")
+fmt.Println(shortURL) // https://goo.gl/***
 ```

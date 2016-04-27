@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"os"
 
-	linebot "github.com/dongri/line-bot-sdk-go"
+	"github.com/dongri/line-bot-sdk-go/linebot"
 )
 
 var botClient *linebot.Client
@@ -18,7 +18,7 @@ func main() {
 	mid := os.Getenv("LINE_MID")
 	proxyURL := getProxyURL() // can set nil if not need
 
-	botClient = linebot.NewClient(linebot.EndPoint, channelID, channelSecret, mid, proxyURL)
+	botClient = linebot.NewClient(channelID, channelSecret, mid, proxyURL)
 
 	// EventHandler
 	var myEvent linebot.EventHandler = NewEventHandler()
@@ -63,7 +63,7 @@ func (be *BotEventHandler) OnBlockedAccountOperation(mids []string) {
 
 // OnTextMessage ...
 func (be *BotEventHandler) OnTextMessage(from, text string) {
-	botClient.SendText([]string{from}, text)
+	log.Print("=== Received Text ===")
 }
 
 // OnImageMessage ...

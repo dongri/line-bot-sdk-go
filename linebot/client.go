@@ -19,47 +19,12 @@ type Client struct {
 	proxyURL      *url.URL
 }
 
-// LIEN Const ...
-const (
-	EndPoint = "https://trialbot-api.line.me"
-)
-
-// ContentType ....
-const (
-	ContentTypeText int = iota + 1
-	ContentTypeImage
-	ContentTypeVideo
-	ContentTypeAudio
-	ContentTypeLocation = 7
-	ContentTypeSticker  = 8
-	ContentTypeContact  = 10
-	ContentTypeRich     = 12
-)
-
-// ToType
-const (
-	ToTypeUser int = iota + 1
-)
-
-// OpType
-const (
-	OpTypeAdded   = 4
-	OpTypeBlocked = 8
-)
-
-// API URLs
-const (
-	URLSendMessage    = "/v1/events"
-	URLUserProfile    = "/v1/profiles"
-	URLMessageContent = "/v1/bot/message"
-)
-
 var eventHandler EventHandler
 
 // NewClient ...
-func NewClient(endpoint, channelID, channelSecret, mid string, proxyURL *url.URL) *Client {
+func NewClient(channelID, channelSecret, mid string, proxyURL *url.URL) *Client {
 	return &Client{
-		endpoint:      endpoint,
+		endpoint:      EndPoint,
 		channelID:     channelID,
 		channelSecret: channelSecret,
 		mID:           mid,

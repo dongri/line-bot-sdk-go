@@ -3,33 +3,13 @@ package linebot
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
-	"net/url"
-	"time"
 )
 
 // URL Shortener
 const (
 	GoogleURLShortener = "https://www.googleapis.com/urlshortener/v1/url"
 )
-
-// DoRequest ...
-func DoRequest(req *http.Request, proxyURL *url.URL) ([]byte, error) {
-	client := &http.Client{
-		Timeout: time.Duration(30 * time.Second),
-	}
-	if proxyURL != nil {
-		client.Transport = &http.Transport{Proxy: http.ProxyURL(proxyURL)}
-	}
-	res, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-	body, err := ioutil.ReadAll(res.Body)
-	return body, err
-}
 
 // URLShortener return goo.gl url
 func URLShortener(APIKey, longURL string) string {

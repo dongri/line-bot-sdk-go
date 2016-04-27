@@ -1,12 +1,5 @@
 package linebot
 
-// Fixed
-const (
-	FixedToChannel         = 1383378250
-	FixedEventTypeSingle   = "138311608800106203"
-	FixedEventTypeMultiple = "140177271400161403"
-)
-
 // ReceivedMessage ...
 type ReceivedMessage struct {
 	Result []Result `json:"result"`
