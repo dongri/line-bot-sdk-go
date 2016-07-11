@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 )
@@ -240,6 +239,5 @@ func (c *Client) sendMessage(apiURL string, message interface{}) (*SentResult, e
 	if err := json.Unmarshal(body, &result); err != nil {
 		return nil, err
 	}
-	log.Print(result)
 	return &result, nil
 }
