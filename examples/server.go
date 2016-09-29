@@ -13,18 +13,16 @@ import (
 var botClient *linebot.Client
 
 func main() {
-	channelID := os.Getenv("LINE_CHANNEL_ID")
+	channelAccessToken := os.Getenv("LINE_CHANNEL_ACCESSTOKEN")
 	channelSecret := os.Getenv("LINE_CHANNEL_SECRET")
-	mid := os.Getenv("LINE_MID")
-	proxyURL := getProxyURL() // can set nil if not need
 
-	botClient = linebot.NewClient(channelID, channelSecret, mid, proxyURL)
+	botClient = linebot.NewClient(channelSecret, channelAccessToken)
 
 	// EventHandler
 	var myEvent linebot.EventHandler = NewEventHandler()
 	botClient.SetEventHandler(myEvent)
 
-	http.HandleFunc("/callback", callbackHandler)
+	http.Handle("/callback", linebot.Middleware(http.HandlerFunc(callbackHandler)))
 	port := os.Getenv("PORT")
 	addr := fmt.Sprintf(":%s", port)
 	http.ListenAndServe(addr, nil)

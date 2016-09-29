@@ -2,38 +2,59 @@ package linebot
 
 import (
 	"bytes"
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 // Client ...
 type Client struct {
-	endpoint      string
-	channelID     string
-	channelSecret string
-	mID           string
-	proxyURL      *url.URL
+	endPoint           string
+	channelAccessToken string
+	channelSecret      string
 }
 
 var eventHandler EventHandler
 
 // NewClient ...
-func NewClient(channelID, channelSecret, mid string, proxyURL *url.URL) *Client {
+func NewClient(channelSecret, channelAccessToken string) *Client {
 	return &Client{
-		endpoint:      EndPoint,
-		channelID:     channelID,
-		channelSecret: channelSecret,
-		mID:           mid,
-		proxyURL:      proxyURL,
+		channelSecret:      channelSecret,
+		channelAccessToken: channelAccessToken,
+		endPoint:           EndPoint,
 	}
 }
 
 // SetEventHandler ...
 func (c *Client) SetEventHandler(evnt EventHandler) {
 	eventHandler = evnt
+}
+
+func (c *Client) setHeader(req *http.Request) *http.Request {
+	req.Header.Add("Content-Type", "application/json; charset=UTF-8")
+	req.Header.Add("X-LINE-ChannelToken", c.channelAccessToken)
+	req.Header.Add("Authorization", "Bearer "+c.channelAccessToken)
+	return req
+}
+
+func (c *Client) do(req *http.Request) ([]byte, error) {
+	client := &http.Client{
+		Timeout: time.Duration(30 * time.Second),
+	}
+	res, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	return body, err
 }
 
 // SendText ...
@@ -138,7 +159,7 @@ func (c *Client) SendMultipleMessage(to []string, messageNotified int, content [
 	multipleContent := new(MultipleContent)
 	multipleContent.MessageNotified = messageNotified
 	multipleContent.Messages = content
-	apiURL := c.endpoint + URLSendMessage
+	apiURL := c.endPoint + PathReplyMessage
 	return c.sendMessage(apiURL, multipleMessage)
 }
 
@@ -149,37 +170,25 @@ func (c *Client) SendSingleMessage(to []string, content Content) (*SentResult, e
 	singleMessage.ToChannel = FixedToChannel
 	singleMessage.EventType = FixedEventTypeSingle
 	singleMessage.Content = content
-	apiURL := c.endpoint + URLSendMessage
+	apiURL := c.endPoint + PathReplyMessage
 	return c.sendMessage(apiURL, singleMessage)
 }
 
 // GetMessageContent ...
 func (c *Client) GetMessageContent(messageID string) ([]byte, error) {
-	apiURL := c.endpoint + URLMessageContent + "/" + messageID + "/content"
+	apiURL := c.endPoint + fmt.Sprintf(PathGetMessageContent, messageID)
 	req, err := http.NewRequest("GET", apiURL, nil)
 	if err != nil {
 		return nil, err
 	}
 	req = c.setHeader(req)
-	body, err := DoRequest(req, c.proxyURL)
-	return body, err
-}
-
-// GetMessageContentPreview ...
-func (c *Client) GetMessageContentPreview(messageID string) ([]byte, error) {
-	apiURL := c.endpoint + URLMessageContent + "/" + messageID + "/content/preview"
-	req, err := http.NewRequest("GET", apiURL, nil)
-	if err != nil {
-		return nil, err
-	}
-	req = c.setHeader(req)
-	body, err := DoRequest(req, c.proxyURL)
+	body, err := c.do(req)
 	return body, err
 }
 
 // GetUserProfiles ... mids is String (comma-separated)
 func (c *Client) GetUserProfiles(mids string) (*UserProfiles, error) {
-	apiURL := c.endpoint + URLUserProfile
+	apiURL := c.endPoint + fmt.Sprintf(PathGetProfile, mids)
 	req, err := http.NewRequest("GET", apiURL, nil)
 	if err != nil {
 		return nil, err
@@ -188,7 +197,7 @@ func (c *Client) GetUserProfiles(mids string) (*UserProfiles, error) {
 	values.Add("mids", mids)
 	req.URL.RawQuery = values.Encode()
 	req = c.setHeader(req)
-	body, err := DoRequest(req, c.proxyURL)
+	body, err := c.do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -213,14 +222,6 @@ func (c *Client) ReceiveMessageAndOperation(body io.Reader) (*ReceivedMessage, e
 	return &receivedMessage, nil
 }
 
-func (c *Client) setHeader(req *http.Request) *http.Request {
-	req.Header.Add("Content-Type", "application/json; charset=UTF-8")
-	req.Header.Add("X-Line-ChannelID", c.channelID)
-	req.Header.Add("X-Line-ChannelSecret", c.channelSecret)
-	req.Header.Add("X-Line-Trusted-User-With-ACL", c.mID)
-	return req
-}
-
 func (c *Client) sendMessage(apiURL string, message interface{}) (*SentResult, error) {
 	b, err := json.Marshal(message)
 	if err != nil {
@@ -231,7 +232,7 @@ func (c *Client) sendMessage(apiURL string, message interface{}) (*SentResult, e
 		return nil, err
 	}
 	req = c.setHeader(req)
-	body, err := DoRequest(req, c.proxyURL)
+	body, err := c.do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -240,4 +241,14 @@ func (c *Client) sendMessage(apiURL string, message interface{}) (*SentResult, e
 		return nil, err
 	}
 	return &result, nil
+}
+
+func (c *Client) validateSignature(signature string, body []byte) bool {
+	decoded, err := base64.StdEncoding.DecodeString(signature)
+	if err != nil {
+		return false
+	}
+	hash := hmac.New(sha256.New, []byte(c.channelSecret))
+	hash.Write(body)
+	return hmac.Equal(decoded, hash.Sum(nil))
 }

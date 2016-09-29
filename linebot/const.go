@@ -2,14 +2,21 @@ package linebot
 
 // LINE Server Endpoint
 const (
-	EndPoint = "https://trialbot-api.line.me"
+	EndPoint = "https://api.line.me"
 )
 
 // API URLs
 const (
-	URLSendMessage    = "/v1/events"
-	URLUserProfile    = "/v1/profiles"
-	URLMessageContent = "/v1/bot/message"
+	// URLSendMessage    = "/v1/events"
+	// URLUserProfile    = "/v1/profiles"
+	// URLMessageContent = "/v1/bot/message"
+
+	PathPushMessage       = "/v2/bot/message/push"
+	PathReplyMessage      = "/v2/bot/message/reply"
+	PathGetMessageContent = "/v2/bot/message/%s/content"
+	PathLeaveGroup        = "/v2/bot/group/%s/leave"
+	PathLeaveRoom         = "/v2/bot/room/%s/leave"
+	PathGetProfile        = "/v2/bot/profile/%s"
 )
 
 // ContentType

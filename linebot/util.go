@@ -27,13 +27,14 @@ func URLShortener(APIKey, longURL string) string {
 		return longURL
 	}
 	req.Header.Add("Content-Type", "application/json; charset=UTF-8")
-	body, err := DoRequest(req, nil)
-	if err != nil {
-		return longURL
-	}
-	var result = map[string]interface{}{}
-	if err := json.Unmarshal(body, &result); err != nil {
-		return longURL
-	}
-	return result["id"].(string)
+	//body, err := DoRequest(req)
+	// if err != nil {
+	// 	return longURL
+	// }
+	// var result = map[string]interface{}{}
+	// if err := json.Unmarshal(body, &result); err != nil {
+	// 	return longURL
+	// }
+	// return result["id"].(string)
+	return ""
 }
