@@ -136,7 +136,7 @@ func (be *BotEventHandler) OnTextMessage(replyToken, text string) {
 		fmt.Println(result)
 		fmt.Println(err)
 	} else {
-		message := linebot.NewTextMessage(text)
+		message := linebot.NewTextMessage(text + "じゃねぇよ！")
 		result, err := botClient.ReplyMessage(replyToken, message)
 		fmt.Println(result)
 		fmt.Println(err)
