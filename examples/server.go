@@ -103,7 +103,7 @@ func (be *BotEventHandler) OnTextMessage(replyToken, text string) {
 		)
 		altText := "Go template"
 		message := linebot.NewTemplateMessage(altText, template)
-		result, err := botClient.ReplyMessage(replyToken, message)
+		result, err := botClient.ReplyMessage(replyToken, message, message, message)
 		fmt.Println(result)
 		fmt.Println(err)
 	} else if text == "sample2" {
