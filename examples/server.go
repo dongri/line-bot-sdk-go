@@ -89,18 +89,7 @@ func (be *BotEventHandler) OnBeaconEvent(replyToken, beaconHwid, beaconYype stri
 
 // OnTextMessage ...
 func (be *BotEventHandler) OnTextMessage(replyToken, text string) {
-	if text == "imagemap" {
-		baseURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource"
-		altText := "Golang"
-		baseSizeWidth := 520
-		baseSizeHeight := 520
-		message := linebot.NewImagemapMessage(baseURL, altText, baseSizeWidth, baseSizeHeight,
-			linebot.NewImagemapURIAction("https://golang.org", *linebot.NewImagemapArea(0, 0, 520, 520)),
-		)
-		result, err := botClient.ReplyMessage(replyToken, message)
-		fmt.Println(result)
-		fmt.Println(err)
-	} else if text == "template" {
+	if text == "sample1" {
 		templateLabel := "Go"
 		templateText := "Hello, Golang!"
 		thumbnailImageURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/gopher.png"
@@ -117,7 +106,7 @@ func (be *BotEventHandler) OnTextMessage(replyToken, text string) {
 		result, err := botClient.ReplyMessage(replyToken, message)
 		fmt.Println(result)
 		fmt.Println(err)
-	} else if text == "confirm" {
+	} else if text == "sample2" {
 		template := linebot.NewConfirmTemplate(
 			"Do it?",
 			linebot.NewTemplateMessageAction("Yes", "Yes!"),
@@ -125,6 +114,24 @@ func (be *BotEventHandler) OnTextMessage(replyToken, text string) {
 		)
 		altText := "Confirm template"
 		message := linebot.NewTemplateMessage(altText, template)
+		result, err := botClient.ReplyMessage(replyToken, message)
+		fmt.Println(result)
+		fmt.Println(err)
+	} else if text == "sample3" {
+		baseURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource"
+		altText := "Golang"
+		baseSizeWidth := 520
+		baseSizeHeight := 520
+		message := linebot.NewImagemapMessage(baseURL, altText, baseSizeWidth, baseSizeHeight,
+			linebot.NewImagemapURIAction("https://golang.org", *linebot.NewImagemapArea(0, 0, 520, 520)),
+		)
+		result, err := botClient.ReplyMessage(replyToken, message)
+		fmt.Println(result)
+		fmt.Println(err)
+	} else if text == "sample4" {
+		originalContentURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/ok.m4a"
+		duration := 1000
+		message := linebot.NewAudioMessage(originalContentURL, duration)
 		result, err := botClient.ReplyMessage(replyToken, message)
 		fmt.Println(result)
 		fmt.Println(err)
