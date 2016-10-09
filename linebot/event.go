@@ -72,21 +72,13 @@ type EventSource struct {
 
 // Postback ...
 type Postback struct {
-	Type       MessageType `json:"type"`
-	ReplyToken string      `json:"replyToken"`
-	Postback   struct {
-		Data string `json:"data"`
-	} `json:"postback"`
+	Data string `json:"data"`
 }
 
 // Beacon ...
 type Beacon struct {
-	Type       MessageType `json:"type"`
-	ReplyToken string      `json:"replyToken"`
-	Beacon     struct {
-		Hwid string `json:"hwid"`
-		Type string `json:"type"`
-	} `json:"beacon"`
+	Hwid string `json:"hwid"`
+	Type string `json:"type"`
 }
 
 // Middleware ...
@@ -130,9 +122,9 @@ func Middleware(next http.Handler) http.Handler {
 			case EventTypeLeave:
 				eventHandler.OnLeaveEvent()
 			case EventTypePostback:
-				eventHandler.OnPostbackEvent(event.ReplyToken, event.Postback.Postback.Data)
+				eventHandler.OnPostbackEvent(event.ReplyToken, event.Postback.Data)
 			case EventTypeBeacon:
-				eventHandler.OnBeaconEvent(event.ReplyToken, event.Beacon.Beacon.Hwid, event.Beacon.Beacon.Type)
+				eventHandler.OnBeaconEvent(event.ReplyToken, event.Beacon.Hwid, event.Beacon.Type)
 			}
 		}
 		next.ServeHTTP(w, r)
@@ -156,7 +148,7 @@ type EventHandler interface {
 	OnJoinEvent(replyToken string)
 	OnLeaveEvent()
 	OnPostbackEvent(replyToken, postbackData string)
-	OnBeaconEvent(replyToken, beaconHwid, beaconYype string)
+	OnBeaconEvent(replyToken, beaconHwid string, beaconType string)
 	OnTextMessage(replyToken, text string)
 	OnImageMessage(replyToken, id string)
 	OnVideoMessage(replyToken, id string)

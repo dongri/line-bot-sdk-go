@@ -76,10 +76,10 @@ func (be *BotEventHandler) OnLeaveEvent() {
 
 // OnPostbackEvent ...
 func (be *BotEventHandler) OnPostbackEvent(replyToken, postbackData string) {
-	// message := linebot.NewTextMessage("「" + postbackData + "」を選択したね！")
-	// result, err := botClient.ReplyMessage(replyToken, message)
-	// fmt.Println(result)
-	// fmt.Println(err)
+	message := linebot.NewTextMessage("「" + postbackData + "」を選択したね！")
+	result, err := botClient.ReplyMessage(replyToken, message)
+	fmt.Println(result)
+	fmt.Println(err)
 }
 
 // OnBeaconEvent ...
@@ -98,7 +98,7 @@ func (be *BotEventHandler) OnTextMessage(replyToken, text string) {
 		template := linebot.NewButtonsTemplate(
 			thumbnailImageURL, templateLabel, templateText,
 			linebot.NewTemplateURIAction(actionLabel, actionURI),
-			linebot.NewTemplatePostbackAction("Go大好き", "Go大好き", "Go大好き"),
+			linebot.NewTemplatePostbackAction("Go大好き", "Go大好き(Postback)", ""),
 		)
 		altText := "Go template"
 		message := linebot.NewTemplateMessage(altText, template)
