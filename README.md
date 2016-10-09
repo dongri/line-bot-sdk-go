@@ -62,9 +62,7 @@ func NewEventHandler() *BotEventHandler {
 // OnFollowEvent ...
 func (be *BotEventHandler) OnFollowEvent(replyToken string) {
 	message := linebot.NewTextMessage("Hello!")
-	result, err := botClient.ReplyMessage(replyToken, message)
-	fmt.Println(result)
-	fmt.Println(err)
+	botClient.ReplyMessage(replyToken, message)
 }
 
 // OnUnFollowEvent ...
@@ -75,9 +73,7 @@ func (be *BotEventHandler) OnUnFollowEvent() {
 // OnJoinEvent ...
 func (be *BotEventHandler) OnJoinEvent(replyToken string) {
 	message := linebot.NewTextMessage("Room, Group 招待ありがとう!")
-	result, err := botClient.ReplyMessage(replyToken, message)
-	fmt.Println(result)
-	fmt.Println(err)
+	botClient.ReplyMessage(replyToken, message)
 }
 
 // OnLeaveEvent ...
@@ -88,9 +84,7 @@ func (be *BotEventHandler) OnLeaveEvent() {
 // OnPostbackEvent ...
 func (be *BotEventHandler) OnPostbackEvent(replyToken, postbackData string) {
 	message := linebot.NewTextMessage("「" + postbackData + "」を選択したね！")
-	result, err := botClient.ReplyMessage(replyToken, message)
-	fmt.Println(result)
-	fmt.Println(err)
+	botClient.ReplyMessage(replyToken, message)
 }
 
 // OnBeaconEvent ...
@@ -100,51 +94,8 @@ func (be *BotEventHandler) OnBeaconEvent(replyToken, beaconHwid, beaconYype stri
 
 // OnTextMessage ...
 func (be *BotEventHandler) OnTextMessage(replyToken, text string) {
-	if text == "imagemap" {
-		baseURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource"
-		altText := "Golang"
-		baseSizeWidth := 520
-		baseSizeHeight := 520
-		message := linebot.NewImagemapMessage(baseURL, altText, baseSizeWidth, baseSizeHeight,
-			linebot.NewImagemapURIAction("https://golang.org", *linebot.NewImagemapArea(0, 0, 520, 520)),
-		)
-		result, err := botClient.ReplyMessage(replyToken, message)
-		fmt.Println(result)
-		fmt.Println(err)
-	} else if text == "template" {
-		templateLabel := "Go"
-		templateText := "Hello, Golang!"
-		thumbnailImageURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/gopher.png"
-		actionLabel := "Go to golang.org"
-		actionURI := "https://golang.org"
-		template := linebot.NewButtonsTemplate(
-			thumbnailImageURL, templateLabel, templateText,
-			linebot.NewTemplateURIAction(actionLabel, actionURI),
-			linebot.NewTemplatePostbackAction("hello postback", "hello こんにちは", "必須じゃない？！"),
-			linebot.NewTemplateMessageAction("hello message", "hello こんにちは2"),
-		)
-		altText := "Go template"
-		message := linebot.NewTemplateMessage(altText, template)
-		result, err := botClient.ReplyMessage(replyToken, message)
-		fmt.Println(result)
-		fmt.Println(err)
-	} else if text == "confirm" {
-		template := linebot.NewConfirmTemplate(
-			"Do it?",
-			linebot.NewTemplateMessageAction("Yes", "Yes!"),
-			linebot.NewTemplateMessageAction("No", "No!"),
-		)
-		altText := "Confirm template"
-		message := linebot.NewTemplateMessage(altText, template)
-		result, err := botClient.ReplyMessage(replyToken, message)
-		fmt.Println(result)
-		fmt.Println(err)
-	} else {
-		message := linebot.NewTextMessage(text)
-		result, err := botClient.ReplyMessage(replyToken, message)
-		fmt.Println(result)
-		fmt.Println(err)
-	}
+	message := linebot.NewTextMessage(text)
+	botClient.ReplyMessage(replyToken, message)
 }
 
 // OnImageMessage ...
@@ -152,9 +103,7 @@ func (be *BotEventHandler) OnImageMessage(replyToken, id string) {
 	originalContentURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/gohper.jpg"
 	previewImageURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/gohper.jpg"
 	message := linebot.NewImageMessage(originalContentURL, previewImageURL)
-	result, err := botClient.ReplyMessage(replyToken, message)
-	fmt.Println(result)
-	fmt.Println(err)
+	botClient.ReplyMessage(replyToken, message)
 }
 
 // OnVideoMessage ...
@@ -162,9 +111,7 @@ func (be *BotEventHandler) OnVideoMessage(replyToken, id string) {
 	originalContentURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/video-original.mp4"
 	previewImageURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/video-preview.png"
 	message := linebot.NewVideoMessage(originalContentURL, previewImageURL)
-	result, err := botClient.ReplyMessage(replyToken, message)
-	fmt.Println(result)
-	fmt.Println(err)
+	botClient.ReplyMessage(replyToken, message)
 }
 
 // OnAudioMessage ...
@@ -172,9 +119,7 @@ func (be *BotEventHandler) OnAudioMessage(replyToken, id string) {
 	originalContentURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/ok.m4a"
 	duration := 1000
 	message := linebot.NewAudioMessage(originalContentURL, duration)
-	result, err := botClient.ReplyMessage(replyToken, message)
-	fmt.Println(result)
-	fmt.Println(err)
+	botClient.ReplyMessage(replyToken, message)
 }
 
 // OnLocationMessage ...
@@ -184,16 +129,12 @@ func (be *BotEventHandler) OnLocationMessage(replyToken string, latitude, longit
 	lat := 35.632211
 	lon := 139.881234
 	message := linebot.NewLocationMessage(title, address, lat, lon)
-	result, err := botClient.ReplyMessage(replyToken, message)
-	fmt.Println(result)
-	fmt.Println(err)
+	botClient.ReplyMessage(replyToken, message)
 }
 
 // OnStickerMessage ...
 func (be *BotEventHandler) OnStickerMessage(replyToken, stickerID string) {
 	message := linebot.NewStickerMessage("1", "1")
-	result, err := botClient.ReplyMessage(replyToken, message)
-	fmt.Println(result)
-	fmt.Println(err)
+	botClient.ReplyMessage(replyToken, message)
 }
 ```
