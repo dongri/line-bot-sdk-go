@@ -1,4 +1,4 @@
-# The LINE bot SDK for Go (Golang)
+# LINE Bot Messaging API SDK for Go (Golang)
 
 ## Start using it
 
@@ -23,7 +23,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
 
 	"github.com/dongri/line-bot-sdk-go/linebot"
@@ -32,18 +31,17 @@ import (
 var botClient *linebot.Client
 
 func main() {
-	channelID := os.Getenv("LINE_CHANNEL_ID")
+	channelAccessToken := os.Getenv("LINE_CHANNEL_ACCESSTOKEN")
 	channelSecret := os.Getenv("LINE_CHANNEL_SECRET")
-	mid := os.Getenv("LINE_MID")
-	proxyURL := getProxyURL() // can set nil if not need
 
-	botClient = linebot.NewClient(channelID, channelSecret, mid, proxyURL)
+	botClient = linebot.NewClient(channelAccessToken)
+	botClient.SetChannelSecret(channelSecret)
 
 	// EventHandler
 	var myEvent linebot.EventHandler = NewEventHandler()
 	botClient.SetEventHandler(myEvent)
 
-	http.HandleFunc("/callback", callbackHandler)
+	http.Handle("/callback", linebot.Middleware(http.HandlerFunc(callbackHandler)))
 	port := os.Getenv("PORT")
 	addr := fmt.Sprintf(":%s", port)
 	http.ListenAndServe(addr, nil)
@@ -53,168 +51,149 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	log.Print("=== callback ===")
 }
 
-func getProxyURL() *url.URL {
-	proxyURL, err := url.Parse(os.Getenv("PROXY_URL"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	return proxyURL
-}
-
 // BotEventHandler ...
-type BotEventHandler struct {
-}
+type BotEventHandler struct{}
 
 // NewEventHandler ...
 func NewEventHandler() *BotEventHandler {
 	return &BotEventHandler{}
 }
 
-// OnAddedAsFriendOperation ...
-func (be *BotEventHandler) OnAddedAsFriendOperation(mids []string) {
-	botClient.SendText(mids, "友達追加してくれてありがとうね！")
+// OnFollowEvent ...
+func (be *BotEventHandler) OnFollowEvent(replyToken string) {
+	message := linebot.NewTextMessage("Hello!")
+	result, err := botClient.ReplyMessage(replyToken, message)
+	fmt.Println(result)
+	fmt.Println(err)
 }
 
-// OnBlockedAccountOperation ...
-func (be *BotEventHandler) OnBlockedAccountOperation(mids []string) {
-	botClient.SendText(mids, "あらら,,, (このメッセージは届かない)")
+// OnUnFollowEvent ...
+func (be *BotEventHandler) OnUnFollowEvent() {
+	log.Print("=== ブロックされた ===")
+}
+
+// OnJoinEvent ...
+func (be *BotEventHandler) OnJoinEvent(replyToken string) {
+	message := linebot.NewTextMessage("Room, Group 招待ありがとう!")
+	result, err := botClient.ReplyMessage(replyToken, message)
+	fmt.Println(result)
+	fmt.Println(err)
+}
+
+// OnLeaveEvent ...
+func (be *BotEventHandler) OnLeaveEvent() {
+	log.Print("=== Groupから蹴られた ===")
+}
+
+// OnPostbackEvent ...
+func (be *BotEventHandler) OnPostbackEvent(replyToken, postbackData string) {
+	message := linebot.NewTextMessage("「" + postbackData + "」を選択したね！")
+	result, err := botClient.ReplyMessage(replyToken, message)
+	fmt.Println(result)
+	fmt.Println(err)
+}
+
+// OnBeaconEvent ...
+func (be *BotEventHandler) OnBeaconEvent(replyToken, beaconHwid, beaconYype string) {
+	log.Print("=== Beacon Event ===")
 }
 
 // OnTextMessage ...
-func (be *BotEventHandler) OnTextMessage(from, text string) {
-	log.Print("=== Received Text ===")
+func (be *BotEventHandler) OnTextMessage(replyToken, text string) {
+	if text == "imagemap" {
+		baseURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource"
+		altText := "Golang"
+		baseSizeWidth := 520
+		baseSizeHeight := 520
+		message := linebot.NewImagemapMessage(baseURL, altText, baseSizeWidth, baseSizeHeight,
+			linebot.NewImagemapURIAction("https://golang.org", *linebot.NewImagemapArea(0, 0, 520, 520)),
+		)
+		result, err := botClient.ReplyMessage(replyToken, message)
+		fmt.Println(result)
+		fmt.Println(err)
+	} else if text == "template" {
+		templateLabel := "Go"
+		templateText := "Hello, Golang!"
+		thumbnailImageURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/gopher.png"
+		actionLabel := "Go to golang.org"
+		actionURI := "https://golang.org"
+		template := linebot.NewButtonsTemplate(
+			thumbnailImageURL, templateLabel, templateText,
+			linebot.NewTemplateURIAction(actionLabel, actionURI),
+			linebot.NewTemplatePostbackAction("hello postback", "hello こんにちは", "必須じゃない？！"),
+			linebot.NewTemplateMessageAction("hello message", "hello こんにちは2"),
+		)
+		altText := "Go template"
+		message := linebot.NewTemplateMessage(altText, template)
+		result, err := botClient.ReplyMessage(replyToken, message)
+		fmt.Println(result)
+		fmt.Println(err)
+	} else if text == "confirm" {
+		template := linebot.NewConfirmTemplate(
+			"Do it?",
+			linebot.NewTemplateMessageAction("Yes", "Yes!"),
+			linebot.NewTemplateMessageAction("No", "No!"),
+		)
+		altText := "Confirm template"
+		message := linebot.NewTemplateMessage(altText, template)
+		result, err := botClient.ReplyMessage(replyToken, message)
+		fmt.Println(result)
+		fmt.Println(err)
+	} else {
+		message := linebot.NewTextMessage(text)
+		result, err := botClient.ReplyMessage(replyToken, message)
+		fmt.Println(result)
+		fmt.Println(err)
+	}
 }
 
 // OnImageMessage ...
-func (be *BotEventHandler) OnImageMessage(from string) {
-	log.Print("=== Received Image ===")
+func (be *BotEventHandler) OnImageMessage(replyToken, id string) {
+	originalContentURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/gohper.jpg"
+	previewImageURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/gohper.jpg"
+	message := linebot.NewImageMessage(originalContentURL, previewImageURL)
+	result, err := botClient.ReplyMessage(replyToken, message)
+	fmt.Println(result)
+	fmt.Println(err)
 }
 
 // OnVideoMessage ...
-func (be *BotEventHandler) OnVideoMessage(from string) {
-	log.Print("=== Received Video ===")
+func (be *BotEventHandler) OnVideoMessage(replyToken, id string) {
+	originalContentURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/video-original.mp4"
+	previewImageURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/video-preview.png"
+	message := linebot.NewVideoMessage(originalContentURL, previewImageURL)
+	result, err := botClient.ReplyMessage(replyToken, message)
+	fmt.Println(result)
+	fmt.Println(err)
 }
 
 // OnAudioMessage ...
-func (be *BotEventHandler) OnAudioMessage(from string) {
-	log.Print("=== Received Audio ===")
+func (be *BotEventHandler) OnAudioMessage(replyToken, id string) {
+	originalContentURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/ok.m4a"
+	duration := 1000
+	message := linebot.NewAudioMessage(originalContentURL, duration)
+	result, err := botClient.ReplyMessage(replyToken, message)
+	fmt.Println(result)
+	fmt.Println(err)
 }
 
 // OnLocationMessage ...
-func (be *BotEventHandler) OnLocationMessage(from, title, address string, latitude, longitude float64) {
-	log.Print("=== Received Location ===")
+func (be *BotEventHandler) OnLocationMessage(replyToken string, latitude, longitude float64) {
+	title := "Disney Resort"
+	address := "〒279-0031 千葉県浦安市舞浜１−１"
+	lat := 35.632211
+	lon := 139.881234
+	message := linebot.NewLocationMessage(title, address, lat, lon)
+	result, err := botClient.ReplyMessage(replyToken, message)
+	fmt.Println(result)
+	fmt.Println(err)
 }
 
 // OnStickerMessage ...
-func (be *BotEventHandler) OnStickerMessage(from, stickerPackageID, stickerID, stickerVersion, stickerText string) {
-	log.Print("=== Received Sticker ===")
+func (be *BotEventHandler) OnStickerMessage(replyToken, stickerID string) {
+	message := linebot.NewStickerMessage("1", "1")
+	result, err := botClient.ReplyMessage(replyToken, message)
+	fmt.Println(result)
+	fmt.Println(err)
 }
-
-// OnContactMessage ...
-func (be *BotEventHandler) OnContactMessage(from, MID, displayName string) {
-	log.Print("=== Received Contact ===")
-}
-```
-
-#### Get user Profile
-
-```go
-fromUser, err := botClient.GetUserProfiles(from)
-if err != nil {
-	log.Print(err)
-}
-displayName := fromUser.Contacts[0].DisplayName
-```
-
-#### Send Text
-
-```go
-botClient.SendText([]string{from}, "Hello!")
-```
-
-#### Send Image
-
-```go
-originalContentURL := "http://example.com//robot_original.jpg"
-previewImageURL := "http://example.com//robot_preview.jpg"
-botClient.SendImage([]string{from}, originalContentURL, previewImageURL)
-```
-
-#### Send Video
-
-```go
-videoOriginalContentURL := "https://example.com/video.mp4"
-videoPreviewImageURL := "http://example.com/video.png"
-botClient.SendVideo([]string{from}, videoOriginalContentURL, videoPreviewImageURL)
-```
-
-#### Send Audio
-
-```go
-audioOriginalContentURL := "https://example.com/test.mp3"
-audlen := "240000"
-botClient.SendAudio([]string{from}, audioOriginalContentURL, audlen)
-```
-
-#### Send Location
-
-```go
-address := "Minato-ku, Tokyo 107-0062"
-latitude := 35.665525
-longitude := 139.717945
-title := "俺んち"
-botClient.SendLocation([]string{from}, address, latitude, longitude, title)
-```
-
-#### Send Sticker
-
-```go
-stkID := "2"
-stkpkgID := "1"
-stkVer := "100"
-stkText := "happy"
-botClient.SendSticker([]string{from}, stkID, stkpkgID, stkVer, stkText)
-```
-
-#### Send Contact
-
-```go
-botClient.SendContact([]string{from}, from, displayName)
-```
-
-#### Send Rich Message
-
-```go
-func getMarkupJSON() string {
-	return "{\"canvas\": {\"width\": 1024,\"height\": 576,\"initialScene\": \"scene1\"},\"images\": {\"image1\": {\"x\": 0,\"y\": 0,\"w\": 1024,\"h\": 576}},\"actions\": {\"openHomepage\": {\"type\": \"web\",\"text\": \"Open link1.\",\"params\": {\"linkUri\": \"http://dongri.github.io/\"}},\"showItem\": {\"type\": \"web\",\"text\": \"Open link2.\",\"params\": {\"linkUri\": \"https://dongri.github.io/post/2016-02-22-the-programmer-hierarchy/\"}}},\"scenes\": {\"scene1\": {\"draws\": [{\"image\": \"image1\",\"x\": 0,\"y\": 0,\"w\": 1024,\"h\": 576}],\"listeners\": [{\"type\": \"touch\",\"params\": [0, 0, 1024, 250],\"action\": \"openHomepage\"}, {\"type\": \"touch\",\"params\": [0, 250, 1024, 326],\"action\": \"showItem\"}]}}}"
-}
-
-downloadURL := "https://farm1.staticflickr.com/715/22658699705_7591e8d0a6_b.jpg"
-altText := "リスト画面に表示される文字列"
-markupJSON := getMarkupJSON()
-botClient.SendRichMessage([]string{from}, downloadURL, altText, markupJSON)
-```
-
-#### Send MultipleMessage
-
-```go
-messageNotified := 0
-var contents []line.Content
-textContent := new(line.Content)
-textContent.Text = "hoge"
-contents = append(contents, *textContent)
-
-imageContent := new(line.Content)
-imageContent.OriginalContentURL = "https://farm1.staticflickr.com/715/22658699705_7591e8d0a6_b.jpg"
-contents = append(contents, *imageContent)
-botClient.SendMultipleMessage([]string{from}, messageNotified, contents)
-```
-
-## Util
-
-#### URLShortener
-
-```go
-shortURL := linebot.URLShortener("APIKEY", "https://map.google.com/********")
-fmt.Println(shortURL) // https://goo.gl/***
 ```
