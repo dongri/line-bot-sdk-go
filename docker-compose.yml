@@ -1,0 +1,11 @@
+bot:
+  build: .
+  dockerfile: Dockerfile
+  environment:
+    LINE_CHANNEL_ACCESSTOKEN: ${LINE_CHANNEL_ACCESSTOKEN}
+    LINE_CHANNEL_SECRET: ${LINE_CHANNEL_SECRET}
+    GO_ENV: production
+  volumes:
+    - .:/go/src/github.com/dongri/line-bot-sdk-go
+  ports:
+    - "50005:3001"
