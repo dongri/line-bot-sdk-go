@@ -141,4 +141,4 @@ func (be *BotEventHandler) OnStickerMessage(replyToken, stickerID string) {
 
 ## Demo
 
-![Go](https://github.com/dongri/line-bot-sdk-go/blob/master/examples/QR.png "QR")
+<img src="https://github.com/dongri/line-bot-sdk-go/blob/master/examples/QR.png" width="185">
