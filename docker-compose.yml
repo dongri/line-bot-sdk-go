@@ -1,5 +1,4 @@
 bot:
-  container_name: bot
   build: .
   dockerfile: Dockerfile
   environment:
