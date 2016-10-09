@@ -5,7 +5,7 @@ RUN apk --no-cache add git
 
 RUN go get github.com/kaneshin/lime
 
-ADD .. /go/src/github.com/dongri/line-bot-sdk-go
+ADD . /go/src/github.com/dongri/line-bot-sdk-go
 WORKDIR /go/src/github.com/dongri/line-bot-sdk-go/examples
 
 EXPOSE 3001
