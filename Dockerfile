@@ -10,4 +10,4 @@ WORKDIR /go/src/github.com/dongri/line-bot-sdk-go/examples
 
 EXPOSE 3000
 
-CMD ["lime", "-bin=/tmp/line-bot-sdk-go", "-port=3001", "-app-port=3000"]
+CMD ["lime", "-bin=/tmp/line-bot-sdk-go", "-port=3000", "-app-port=3001"]
