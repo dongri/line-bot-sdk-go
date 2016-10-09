@@ -1,0 +1,12 @@
+bot:
+  container_name: bot
+  build: .
+  dockerfile: Dockerfile
+  environment:
+    - GO_ENV=production
+  volumes:
+    - .:/go/src/github.com/dongri/line-bot-sdk-go
+  log_opt:
+    max-size: "500k"
+  ports:
+    - "50005:3000"
