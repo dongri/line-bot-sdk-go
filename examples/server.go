@@ -22,10 +22,18 @@ func main() {
 	var myEvent linebot.EventHandler = NewEventHandler()
 	botClient.SetEventHandler(myEvent)
 
+	http.HandleFunc("/", indexHandler)
 	http.Handle("/callback", linebot.Middleware(http.HandlerFunc(callbackHandler)))
 	port := os.Getenv("PORT")
+	if len(port) == 0 {
+		port = "3000"
+	}
 	addr := fmt.Sprintf(":%s", port)
 	http.ListenAndServe(addr, nil)
+}
+
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello, Bot")
 }
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
