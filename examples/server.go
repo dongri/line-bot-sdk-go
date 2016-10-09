@@ -103,7 +103,7 @@ func (be *BotEventHandler) OnTextMessage(replyToken, text string) {
 		)
 		altText := "Go template"
 		message := linebot.NewTemplateMessage(altText, template)
-		result, err := botClient.ReplyMessage(replyToken, message, message, message)
+		result, err := botClient.ReplyMessage(replyToken, message)
 		fmt.Println(result)
 		fmt.Println(err)
 	} else if text == "sample2" {
@@ -118,13 +118,25 @@ func (be *BotEventHandler) OnTextMessage(replyToken, text string) {
 		fmt.Println(result)
 		fmt.Println(err)
 	} else if text == "sample3" {
-		baseURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource"
-		altText := "Golang"
-		baseSizeWidth := 520
-		baseSizeHeight := 520
-		message := linebot.NewImagemapMessage(baseURL, altText, baseSizeWidth, baseSizeHeight,
-			linebot.NewImagemapURIAction("https://golang.org", *linebot.NewImagemapArea(0, 0, 520, 520)),
+		baseURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/"
+		template := linebot.NewCarouselTemplate(
+			linebot.NewCarouselColumn(
+				baseURL+"boa1.jpg", "Boa1", "Boa1",
+				linebot.NewTemplatePostbackAction("好き！", "好き！", "好き！"),
+				linebot.NewTemplateMessageAction("普通", "普通"),
+			),
+			linebot.NewCarouselColumn(
+				baseURL+"boa2.jpg", "Boa2", "Boa2",
+				linebot.NewTemplatePostbackAction("好き！", "好き！", "好き！"),
+				linebot.NewTemplateMessageAction("普通", "普通"),
+			),
+			linebot.NewCarouselColumn(
+				baseURL+"boa3.jpg", "Boa3", "Boa3",
+				linebot.NewTemplatePostbackAction("好き！", "好き！", "好き！"),
+				linebot.NewTemplateMessageAction("普通", "普通"),
+			),
 		)
+		message := linebot.NewTemplateMessage("BoA", template)
 		result, err := botClient.ReplyMessage(replyToken, message)
 		fmt.Println(result)
 		fmt.Println(err)
@@ -141,6 +153,18 @@ func (be *BotEventHandler) OnTextMessage(replyToken, text string) {
 		fmt.Println(result)
 		fmt.Println(err)
 	}
+
+	// baseURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource"
+	// altText := "Golang"
+	// baseSizeWidth := 520
+	// baseSizeHeight := 520
+	// message := linebot.NewImagemapMessage(baseURL, altText, baseSizeWidth, baseSizeHeight,
+	// 	linebot.NewImagemapURIAction("https://golang.org", *linebot.NewImagemapArea(0, 0, 520, 520)),
+	// )
+	// result, err := botClient.ReplyMessage(replyToken, message)
+	// fmt.Println(result)
+	// fmt.Println(err)
+
 }
 
 // OnImageMessage ...
