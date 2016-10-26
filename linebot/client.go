@@ -43,7 +43,7 @@ type MessageContentResponse struct {
 type UserProfileResponse struct {
 	UserID        string `json:"userId"`
 	DisplayName   string `json:"displayName"`
-	PicutureURL   string `json:"pictureUrl"`
+	PictureURL    string `json:"pictureUrl"`
 	StatusMessage string `json:"statusMessage"`
 }
 
@@ -102,6 +102,7 @@ func (c *Client) do(req *http.Request) (*http.Response, []byte, error) {
 		if err := json.Unmarshal(body, &result); err != nil {
 			return res, nil, err
 		}
+		fmt.Println(result)
 		return res, nil, errors.New("server error status code: " + strconv.Itoa(res.StatusCode))
 	}
 	body, err := ioutil.ReadAll(res.Body)
@@ -157,18 +158,17 @@ func (c *Client) GetMessageContent(messageID string) (*MessageContentResponse, e
 
 // GetProfile ...
 func (c *Client) GetProfile(userID string) (*UserProfileResponse, error) {
-	endpoint := fmt.Sprintf(EndPoint+GetMessageContent, userID)
+	endpoint := fmt.Sprintf(EndPoint+GetProfile, userID)
 	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
 		return nil, err
 	}
-	res, _, err := c.do(req)
+	_, body, err := c.do(req)
 	if err != nil {
 		return nil, err
 	}
-	decoder := json.NewDecoder(res.Body)
 	result := UserProfileResponse{}
-	if err := decoder.Decode(&result); err != nil {
+	if err := json.Unmarshal(body, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -181,13 +181,12 @@ func (c *Client) LeaveGroup(groupID string) (*BasicResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	res, _, err := c.do(req)
+	_, body, err := c.do(req)
 	if err != nil {
 		return nil, err
 	}
-	decoder := json.NewDecoder(res.Body)
 	result := BasicResponse{}
-	if err := decoder.Decode(&result); err != nil {
+	if err := json.Unmarshal(body, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -200,13 +199,12 @@ func (c *Client) LeaveRoom(roomID string) (*BasicResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	res, _, err := c.do(req)
+	_, body, err := c.do(req)
 	if err != nil {
 		return nil, err
 	}
-	decoder := json.NewDecoder(res.Body)
 	result := BasicResponse{}
-	if err := decoder.Decode(&result); err != nil {
+	if err := json.Unmarshal(body, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil

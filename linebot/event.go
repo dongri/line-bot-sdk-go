@@ -101,30 +101,30 @@ func Middleware(next http.Handler) http.Handler {
 			case EventTypeMessage:
 				switch event.Message.Type {
 				case MessageTypeText:
-					eventHandler.OnTextMessage(event.ReplyToken, event.Message.Text)
+					eventHandler.OnTextMessage(event.Source, event.ReplyToken, event.Message.Text)
 				case MessageTypeImage:
-					eventHandler.OnImageMessage(event.ReplyToken, event.Message.ID)
+					eventHandler.OnImageMessage(event.Source, event.ReplyToken, event.Message.ID)
 				case MessageTypeVideo:
-					eventHandler.OnVideoMessage(event.ReplyToken, event.Message.ID)
+					eventHandler.OnVideoMessage(event.Source, event.ReplyToken, event.Message.ID)
 				case MessageTypeAudio:
-					eventHandler.OnAudioMessage(event.ReplyToken, event.Message.ID)
+					eventHandler.OnAudioMessage(event.Source, event.ReplyToken, event.Message.ID)
 				case MessageTypeLocation:
-					eventHandler.OnLocationMessage(event.ReplyToken, event.Message.Latitude, event.Message.Longitude)
+					eventHandler.OnLocationMessage(event.Source, event.ReplyToken, event.Message.Latitude, event.Message.Longitude)
 				case MessageTypeSticker:
-					eventHandler.OnStickerMessage(event.ReplyToken, event.Message.StickerID)
+					eventHandler.OnStickerMessage(event.Source, event.ReplyToken, event.Message.StickerID)
 				}
 			case EventTypeFollow:
-				eventHandler.OnFollowEvent(event.ReplyToken)
+				eventHandler.OnFollowEvent(event.Source, event.ReplyToken)
 			case EventTypeUnfollow:
-				eventHandler.OnUnFollowEvent()
+				eventHandler.OnUnFollowEvent(event.Source)
 			case EventTypeJoin:
-				eventHandler.OnJoinEvent(event.ReplyToken)
+				eventHandler.OnJoinEvent(event.Source, event.ReplyToken)
 			case EventTypeLeave:
-				eventHandler.OnLeaveEvent()
+				eventHandler.OnLeaveEvent(event.Source)
 			case EventTypePostback:
-				eventHandler.OnPostbackEvent(event.ReplyToken, event.Postback.Data)
+				eventHandler.OnPostbackEvent(event.Source, event.ReplyToken, event.Postback.Data)
 			case EventTypeBeacon:
-				eventHandler.OnBeaconEvent(event.ReplyToken, event.Beacon.Hwid, event.Beacon.Type)
+				eventHandler.OnBeaconEvent(event.Source, event.ReplyToken, event.Beacon.Hwid, event.Beacon.Type)
 			}
 		}
 		next.ServeHTTP(w, r)
@@ -143,16 +143,16 @@ func validateSignature(signature string, body []byte) bool {
 
 // EventHandler ...
 type EventHandler interface {
-	OnFollowEvent(replyToken string)
-	OnUnFollowEvent()
-	OnJoinEvent(replyToken string)
-	OnLeaveEvent()
-	OnPostbackEvent(replyToken, postbackData string)
-	OnBeaconEvent(replyToken, beaconHwid string, beaconType string)
-	OnTextMessage(replyToken, text string)
-	OnImageMessage(replyToken, id string)
-	OnVideoMessage(replyToken, id string)
-	OnAudioMessage(replyToken, id string)
-	OnLocationMessage(replyToken string, latitude, longitude float64)
-	OnStickerMessage(replyToken, stickerID string)
+	OnFollowEvent(source EventSource, replyToken string)
+	OnUnFollowEvent(source EventSource)
+	OnJoinEvent(source EventSource, replyToken string)
+	OnLeaveEvent(source EventSource)
+	OnPostbackEvent(source EventSource, replyToken, postbackData string)
+	OnBeaconEvent(source EventSource, replyToken, beaconHwid string, beaconType string)
+	OnTextMessage(source EventSource, replyToken, text string)
+	OnImageMessage(source EventSource, replyToken, id string)
+	OnVideoMessage(source EventSource, replyToken, id string)
+	OnAudioMessage(source EventSource, replyToken, id string)
+	OnLocationMessage(source EventSource, replyToken string, latitude, longitude float64)
+	OnStickerMessage(source EventSource, replyToken, stickerID string)
 }
