@@ -109,7 +109,7 @@ func Middleware(next http.Handler) http.Handler {
 				case MessageTypeAudio:
 					eventHandler.OnAudioMessage(event.Source, event.ReplyToken, event.Message.ID)
 				case MessageTypeLocation:
-					eventHandler.OnLocationMessage(event.Source, event.ReplyToken, event.Message.Latitude, event.Message.Longitude)
+					eventHandler.OnLocationMessage(event.Source, event.ReplyToken, event.Message.Title, event.Message.Address, event.Message.Latitude, event.Message.Longitude)
 				case MessageTypeSticker:
 					eventHandler.OnStickerMessage(event.Source, event.ReplyToken, event.Message.PackageID, event.Message.StickerID)
 				}
@@ -153,6 +153,6 @@ type EventHandler interface {
 	OnImageMessage(source EventSource, replyToken, id string)
 	OnVideoMessage(source EventSource, replyToken, id string)
 	OnAudioMessage(source EventSource, replyToken, id string)
-	OnLocationMessage(source EventSource, replyToken string, latitude, longitude float64)
+	OnLocationMessage(source EventSource, replyToken string, title, address string, latitude, longitude float64)
 	OnStickerMessage(source EventSource, replyToken, packageID, stickerID string)
 }
