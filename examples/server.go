@@ -199,9 +199,9 @@ func (be *BotEventHandler) OnAudioMessage(source linebot.EventSource, replyToken
 }
 
 // OnLocationMessage ...
-func (be *BotEventHandler) OnLocationMessage(source linebot.EventSource, replyToken string, latitude, longitude float64) {
-	title := "Disney Resort"
-	address := "〒279-0031 千葉県浦安市舞浜１−１"
+func (be *BotEventHandler) OnLocationMessage(source linebot.EventSource, replyToken string, title, address string, latitude, longitude float64) {
+	title = "Disney Resort"
+	address = "〒279-0031 千葉県浦安市舞浜１−１"
 	lat := 35.632211
 	lon := 139.881234
 	message := linebot.NewLocationMessage(title, address, lat, lon)
@@ -211,7 +211,7 @@ func (be *BotEventHandler) OnLocationMessage(source linebot.EventSource, replyTo
 }
 
 // OnStickerMessage ...
-func (be *BotEventHandler) OnStickerMessage(source linebot.EventSource, replyToken, stickerID string) {
+func (be *BotEventHandler) OnStickerMessage(source linebot.EventSource, replyToken, packageID, stickerID string) {
 	message := linebot.NewStickerMessage("1", "1")
 	result, err := botClient.ReplyMessage(replyToken, message)
 	fmt.Println(result)
