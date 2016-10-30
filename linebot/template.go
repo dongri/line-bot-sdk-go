@@ -40,8 +40,8 @@ type TemplateMessage struct {
 // ButtonsTemplate ...
 type ButtonsTemplate struct {
 	Type              TemplateType     `json:"type"`
-	ThumbnailImageURL string           `json:"thumbnailImageUrl"`
-	Title             string           `json:"title"`
+	ThumbnailImageURL string           `json:"thumbnailImageUrl,omitempty"`
+	Title             string           `json:"title,omitempty"`
 	Text              string           `json:"text"`
 	Actions           []TemplateAction `json:"actions"`
 }
@@ -83,7 +83,7 @@ type TemplatePostbackAction struct {
 
 // CarouselColumn ...
 type CarouselColumn struct {
-	ThumbnailImageURL string           `json:"thumbnailImageUrl"`
+	ThumbnailImageURL string           `json:"thumbnailImageUrl,omitempty"`
 	Title             string           `json:"title,omitempty"`
 	Text              string           `json:"text"`
 	Actions           []TemplateAction `json:"actions"`
