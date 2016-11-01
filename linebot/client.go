@@ -94,13 +94,13 @@ func (c *Client) do(req *http.Request) (*http.Response, []byte, error) {
 	defer res.Body.Close()
 
 	if res.StatusCode < 200 || res.StatusCode >= 400 {
-		body, err := ioutil.ReadAll(res.Body)
-		if err != nil {
-			return res, nil, err
+		body, readErr := ioutil.ReadAll(res.Body)
+		if readErr != nil {
+			return res, nil, readErr
 		}
 		var result APISendResult
-		if err := json.Unmarshal(body, &result); err != nil {
-			return res, nil, err
+		if unmarshalErr := json.Unmarshal(body, &result); unmarshalErr != nil {
+			return res, nil, unmarshalErr
 		}
 		fmt.Println(result)
 		return res, nil, errors.New("server error status code: " + strconv.Itoa(res.StatusCode))

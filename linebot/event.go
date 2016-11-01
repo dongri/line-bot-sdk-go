@@ -97,6 +97,7 @@ func Middleware(next http.Handler) http.Handler {
 			log.Fatal(err)
 		}
 		for _, event := range webhook.Events {
+			eventHandler.OnEvent(event)
 			switch event.Type {
 			case EventTypeMessage:
 				switch event.Message.Type {
@@ -143,6 +144,7 @@ func validateSignature(signature string, body []byte) bool {
 
 // EventHandler ...
 type EventHandler interface {
+	OnEvent(event Event)
 	OnFollowEvent(source EventSource, replyToken string)
 	OnUnFollowEvent(source EventSource)
 	OnJoinEvent(source EventSource, replyToken string)
