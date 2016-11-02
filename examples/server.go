@@ -33,7 +33,7 @@ func main() {
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, Bot")
+	fmt.Fprintf(w, "LINE BOT SDK GO")
 }
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
@@ -91,7 +91,7 @@ func (be *BotEventHandler) OnBeaconEvent(source linebot.EventSource, replyToken,
 
 // OnTextMessage ...
 func (be *BotEventHandler) OnTextMessage(source linebot.EventSource, replyToken, text string) {
-	if text == "sample1" {
+	if text == "1" {
 		templateLabel := "Go"
 		templateText := "Hello, Golang!"
 		thumbnailImageURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/gopher.png"
@@ -107,7 +107,7 @@ func (be *BotEventHandler) OnTextMessage(source linebot.EventSource, replyToken,
 		result, err := botClient.ReplyMessage(replyToken, message)
 		fmt.Println(result)
 		fmt.Println(err)
-	} else if text == "sample2" {
+	} else if text == "2" {
 		template := linebot.NewConfirmTemplate(
 			"Do it?",
 			linebot.NewTemplateMessageAction("Yes", "Yes!"),
@@ -118,7 +118,7 @@ func (be *BotEventHandler) OnTextMessage(source linebot.EventSource, replyToken,
 		result, err := botClient.ReplyMessage(replyToken, message)
 		fmt.Println(result)
 		fmt.Println(err)
-	} else if text == "sample3" {
+	} else if text == "3" {
 		baseURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/"
 		template := linebot.NewCarouselTemplate(
 			linebot.NewCarouselColumn(
@@ -141,10 +141,16 @@ func (be *BotEventHandler) OnTextMessage(source linebot.EventSource, replyToken,
 		result, err := botClient.ReplyMessage(replyToken, message)
 		fmt.Println(result)
 		fmt.Println(err)
-	} else if text == "sample4" {
+	} else if text == "4" {
 		originalContentURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/ok.m4a"
 		duration := 1000
 		message := linebot.NewAudioMessage(originalContentURL, duration)
+		result, err := botClient.ReplyMessage(replyToken, message)
+		fmt.Println(result)
+		fmt.Println(err)
+	} else if text == "s" {
+		originalContentURL := GetImageFromWeb()
+		message := linebot.NewImageMessage(originalContentURL, originalContentURL)
 		result, err := botClient.ReplyMessage(replyToken, message)
 		fmt.Println(result)
 		fmt.Println(err)
@@ -154,18 +160,6 @@ func (be *BotEventHandler) OnTextMessage(source linebot.EventSource, replyToken,
 		fmt.Println(result)
 		fmt.Println(err)
 	}
-
-	// baseURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource"
-	// altText := "Golang"
-	// baseSizeWidth := 520
-	// baseSizeHeight := 520
-	// message := linebot.NewImagemapMessage(baseURL, altText, baseSizeWidth, baseSizeHeight,
-	// 	linebot.NewImagemapURIAction("https://golang.org", *linebot.NewImagemapArea(0, 0, 520, 520)),
-	// )
-	// result, err := botClient.ReplyMessage(replyToken, message)
-	// fmt.Println(result)
-	// fmt.Println(err)
-
 }
 
 // OnImageMessage ...
@@ -216,4 +210,8 @@ func (be *BotEventHandler) OnStickerMessage(source linebot.EventSource, replyTok
 	result, err := botClient.ReplyMessage(replyToken, message)
 	fmt.Println(result)
 	fmt.Println(err)
+}
+
+// OnEvent ...
+func (be *BotEventHandler) OnEvent(event linebot.Event) {
 }
