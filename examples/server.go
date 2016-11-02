@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/dongri/line-bot-sdk-go/linebot"
 )
@@ -150,6 +151,7 @@ func (be *BotEventHandler) OnTextMessage(source linebot.EventSource, replyToken,
 		fmt.Println(err)
 	} else if text == "s" {
 		originalContentURL := GetImageFromWeb()
+		originalContentURL = strings.Replace(originalContentURL, "http://", "https://", -1)
 		message := linebot.NewImageMessage(originalContentURL, originalContentURL)
 		result, err := botClient.ReplyMessage(replyToken, message)
 		fmt.Println(result)
