@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/dongri/line-bot-sdk-go/linebot"
@@ -132,7 +133,7 @@ func (be *BotEventHandler) OnTextMessage(source linebot.EventSource, replyToken,
 			originalContentURL := GetImageFromWeb()
 			originalContentURL = strings.Replace(originalContentURL, "http://", "https://", -1)
 			column := linebot.NewCarouselColumn(
-				originalContentURL, "", "",
+				originalContentURL, "", strconv.Itoa(i),
 				linebot.NewTemplatePostbackAction("好き！", "好き！", "好き！"),
 				linebot.NewTemplateMessageAction("普通", "普通"),
 			)
