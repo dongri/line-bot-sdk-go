@@ -80,7 +80,8 @@ func (be *BotEventHandler) OnLeaveEvent(source linebot.EventSource) {
 
 // OnPostbackEvent ...
 func (be *BotEventHandler) OnPostbackEvent(source linebot.EventSource, replyToken, postbackData string) {
-	message := linebot.NewTextMessage("「" + postbackData + "」を選択したね！")
+	originalContentURL := postbackData
+	message := linebot.NewImageMessage(originalContentURL, originalContentURL)
 	result, err := botClient.ReplyMessage(replyToken, message)
 	fmt.Println(result)
 	fmt.Println(err)
@@ -134,14 +135,20 @@ func (be *BotEventHandler) OnTextMessage(source linebot.EventSource, replyToken,
 			originalContentURL = strings.Replace(originalContentURL, "http://", "https://", -1)
 			column := linebot.NewCarouselColumn(
 				originalContentURL, "", strconv.Itoa(i),
-				linebot.NewTemplatePostbackAction("好き！", "好き！", "好き！"),
+				linebot.NewTemplatePostbackAction("好き！", originalContentURL, "好き！"),
 				linebot.NewTemplateMessageAction("普通", "普通"),
 			)
 			columns = append(columns, column)
 		}
 		template := linebot.NewCarouselTemplate(columns...)
-
 		message := linebot.NewTemplateMessage("Sexy Girl", template)
+		result, err := botClient.ReplyMessage(replyToken, message)
+		fmt.Println(result)
+		fmt.Println(err)
+	} else if text == "girl" {
+		originalContentURL := GetImageFromWeb()
+		originalContentURL = strings.Replace(originalContentURL, "http://", "https://", -1)
+		message := linebot.NewImageMessage(originalContentURL, originalContentURL)
 		result, err := botClient.ReplyMessage(replyToken, message)
 		fmt.Println(result)
 		fmt.Println(err)
