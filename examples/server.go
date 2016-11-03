@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
 
 	"github.com/dongri/line-bot-sdk-go/linebot"
 )
@@ -92,7 +91,7 @@ func (be *BotEventHandler) OnBeaconEvent(source linebot.EventSource, replyToken,
 
 // OnTextMessage ...
 func (be *BotEventHandler) OnTextMessage(source linebot.EventSource, replyToken, text string) {
-	if text == "1" {
+	if text == "Buttons" {
 		templateLabel := "Go"
 		templateText := "Hello, Golang!"
 		thumbnailImageURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/gopher.png"
@@ -108,7 +107,7 @@ func (be *BotEventHandler) OnTextMessage(source linebot.EventSource, replyToken,
 		result, err := botClient.ReplyMessage(replyToken, message)
 		fmt.Println(result)
 		fmt.Println(err)
-	} else if text == "2" {
+	} else if text == "Confirm" {
 		template := linebot.NewConfirmTemplate(
 			"Do it?",
 			linebot.NewTemplateMessageAction("Yes", "Yes!"),
@@ -119,48 +118,35 @@ func (be *BotEventHandler) OnTextMessage(source linebot.EventSource, replyToken,
 		result, err := botClient.ReplyMessage(replyToken, message)
 		fmt.Println(result)
 		fmt.Println(err)
-	} else if text == "3" {
-		baseURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/"
-		template := linebot.NewCarouselTemplate(
-			linebot.NewCarouselColumn(
-				baseURL+"boa1.jpg", "Boa1", "Boa1",
-				linebot.NewTemplatePostbackAction("好き！", "好き！", "好き！"),
-				linebot.NewTemplateMessageAction("普通", "普通"),
-			),
-			linebot.NewCarouselColumn(
-				baseURL+"boa2.jpg", "Boa2", "Boa2",
-				linebot.NewTemplatePostbackAction("好き！", "好き！", "好き！"),
-				linebot.NewTemplateMessageAction("普通", "普通"),
-			),
-			linebot.NewCarouselColumn(
-				baseURL+"boa3.jpg", "Boa3", "Boa3",
-				linebot.NewTemplatePostbackAction("好き！", "好き！", "好き！"),
-				linebot.NewTemplateMessageAction("普通", "普通"),
-			),
-		)
-		message := linebot.NewTemplateMessage("BoA", template)
-		result, err := botClient.ReplyMessage(replyToken, message)
-		fmt.Println(result)
-		fmt.Println(err)
-	} else if text == "4" {
+	} else if text == "Audio" {
 		originalContentURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/ok.m4a"
 		duration := 1000
 		message := linebot.NewAudioMessage(originalContentURL, duration)
 		result, err := botClient.ReplyMessage(replyToken, message)
 		fmt.Println(result)
 		fmt.Println(err)
-	} else if text == "s" {
-		originalContentURL := GetImageFromWeb()
-		originalContentURL = strings.Replace(originalContentURL, "http://", "https://", -1)
-		message := linebot.NewImageMessage(originalContentURL, originalContentURL)
+	} else if text == "Carousel" {
+		var columns []*linebot.CarouselColumn
+		for i := 0; i < 5; i++ {
+			originalContentURL := GetImageFromWeb()
+			column := linebot.NewCarouselColumn(
+				originalContentURL, "", "",
+				linebot.NewTemplatePostbackAction("好き！", "好き！", "好き！"),
+				linebot.NewTemplateMessageAction("普通", "普通"),
+			)
+			columns = append(columns, column)
+		}
+		template := linebot.NewCarouselTemplate(columns...)
+
+		message := linebot.NewTemplateMessage("Sexy Girl", template)
 		result, err := botClient.ReplyMessage(replyToken, message)
 		fmt.Println(result)
 		fmt.Println(err)
 	} else {
-		message := linebot.NewTextMessage(text + "じゃねぇよ！")
-		result, err := botClient.ReplyMessage(replyToken, message)
-		fmt.Println(result)
-		fmt.Println(err)
+		//message := linebot.NewTextMessage(text + "じゃねぇよ！")
+		//result, err := botClient.ReplyMessage(replyToken, message)
+		//fmt.Println(result)
+		//fmt.Println(err)
 	}
 }
 
