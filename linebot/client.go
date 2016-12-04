@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -34,7 +33,7 @@ type BasicResponse struct {
 
 // MessageContentResponse ...
 type MessageContentResponse struct {
-	Content       io.ReadCloser
+	Content       []byte
 	ContentLength int64
 	ContentType   string
 }
@@ -144,12 +143,12 @@ func (c *Client) GetMessageContent(messageID string) (*MessageContentResponse, e
 	if err != nil {
 		return nil, err
 	}
-	res, _, err := c.do(req)
+	res, body, err := c.do(req)
 	if err != nil {
 		return nil, err
 	}
 	result := MessageContentResponse{
-		Content:       res.Body,
+		Content:       body,
 		ContentType:   res.Header.Get("Content-Type"),
 		ContentLength: res.ContentLength,
 	}
