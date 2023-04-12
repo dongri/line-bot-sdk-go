@@ -96,7 +96,7 @@ func (be *BotEventHandler) OnBeaconEvent(source linebot.EventSource, replyToken,
 
 // OnTextMessage ...
 func (be *BotEventHandler) OnTextMessage(source linebot.EventSource, replyToken, text string) {
-	message := linebot.NewTextMessage(text + "じゃねぇよ！")
+	message := linebot.NewTextMessage(text)
 	result, err := botClient.ReplyMessage(replyToken, message)
 	fmt.Println(result)
 	fmt.Println(err)
@@ -104,8 +104,8 @@ func (be *BotEventHandler) OnTextMessage(source linebot.EventSource, replyToken,
 
 // OnImageMessage ...
 func (be *BotEventHandler) OnImageMessage(source linebot.EventSource, replyToken, id string) {
-	originalContentURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/gohper.jpg"
-	previewImageURL := "https://dl.dropboxusercontent.com/u/358152/linebot/resource/gohper.jpg"
+	originalContentURL := "https://play-lh.googleusercontent.com/74iMObG1vsR3Kfm82RjERFhf99QFMNIY211oMvN636_gULghbRBMjpVFTjOK36oxCbs"
+	previewImageURL := "https://play-lh.googleusercontent.com/74iMObG1vsR3Kfm82RjERFhf99QFMNIY211oMvN636_gULghbRBMjpVFTjOK36oxCbs"
 	message := linebot.NewImageMessage(originalContentURL, previewImageURL)
 	result, err := botClient.ReplyMessage(replyToken, message)
 	fmt.Println(result)
@@ -151,8 +151,8 @@ func (be *BotEventHandler) OnStickerMessage(source linebot.EventSource, replyTok
 	fmt.Println(result)
 	fmt.Println(err)
 }
+
+// OnEvent ...
+func (be *BotEventHandler) OnEvent(event linebot.Event) {
+}
 ```
-
-## Demo
-
-<img src="https://github.com/dongri/line-bot-sdk-go/blob/master/examples/QR.png" width="185">
