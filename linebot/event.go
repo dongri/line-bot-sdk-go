@@ -89,7 +89,7 @@ func Middleware(next http.Handler) http.Handler {
 		if err != nil {
 			log.Fatal(err)
 		}
-		if !validateSignature(r.Header.Get("X-LINE-Signature"), body) {
+		if !validateSignature(r.Header.Get("x-line-signature"), body) {
 			log.Fatal(errors.New("invalid signature"))
 		}
 		webhook := new(Webhook)
