@@ -153,10 +153,10 @@ func (be *BotEventHandler) OnTextMessage(source linebot.EventSource, replyToken,
 		fmt.Println(result)
 		fmt.Println(err)
 	} else {
-		//message := linebot.NewTextMessage(text + "じゃねぇよ！")
-		//result, err := botClient.ReplyMessage(replyToken, message)
-		//fmt.Println(result)
-		//fmt.Println(err)
+		message := linebot.NewTextMessage(text)
+		result, err := botClient.ReplyMessage(replyToken, message)
+		fmt.Println(result)
+		fmt.Println(err)
 	}
 }
 
@@ -192,11 +192,11 @@ func (be *BotEventHandler) OnAudioMessage(source linebot.EventSource, replyToken
 
 // OnLocationMessage ...
 func (be *BotEventHandler) OnLocationMessage(source linebot.EventSource, replyToken string, title, address string, latitude, longitude float64) {
-	title = "Disney Resort"
-	address = "〒279-0031 千葉県浦安市舞浜１−１"
+	titleSample := "Disney Resort"
+	addressSample := "〒279-0031 千葉県浦安市舞浜１−１"
 	lat := 35.632211
 	lon := 139.881234
-	message := linebot.NewLocationMessage(title, address, lat, lon)
+	message := linebot.NewLocationMessage(titleSample, addressSample, lat, lon)
 	result, err := botClient.ReplyMessage(replyToken, message)
 	fmt.Println(result)
 	fmt.Println(err)

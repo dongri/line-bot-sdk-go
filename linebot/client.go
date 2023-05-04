@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strconv"
 	"time"
@@ -93,7 +93,7 @@ func (c *Client) do(req *http.Request) (*http.Response, []byte, error) {
 	defer res.Body.Close()
 
 	if res.StatusCode < 200 || res.StatusCode >= 400 {
-		body, readErr := ioutil.ReadAll(res.Body)
+		body, readErr := io.ReadAll(res.Body)
 		if readErr != nil {
 			return res, nil, readErr
 		}
@@ -104,8 +104,36 @@ func (c *Client) do(req *http.Request) (*http.Response, []byte, error) {
 		fmt.Println(result)
 		return res, nil, errors.New("server error status code: " + strconv.Itoa(res.StatusCode))
 	}
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	return res, body, err
+}
+
+// PushMessage ...
+func (c *Client) PushMessage(to string, messages ...Message) (*APISendResult, error) {
+	pushMessage := struct {
+		To       string    `json:"to"`
+		Messages []Message `json:"messages"`
+	}{
+		To:       to,
+		Messages: messages,
+	}
+	b, err := json.Marshal(pushMessage)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest("POST", EndPoint+PushMessage, bytes.NewBuffer(b))
+	if err != nil {
+		return nil, err
+	}
+	_, body, err := c.do(req)
+	if err != nil {
+		return nil, err
+	}
+	var result APISendResult
+	if err := json.Unmarshal(body, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
 }
 
 // ReplyMessage ...

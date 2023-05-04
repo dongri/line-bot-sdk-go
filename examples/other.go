@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"math/rand"
 	"net/http"
@@ -22,7 +22,7 @@ func DoRequest(req *http.Request, proxyURL *url.URL) map[string]interface{} {
 	}
 	defer res.Body.Close()
 	var result map[string]interface{}
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		log.Print(err)
 	}
@@ -34,7 +34,7 @@ func DoRequest(req *http.Request, proxyURL *url.URL) map[string]interface{} {
 
 // GetImageFromWeb ...
 func GetImageFromWeb() string {
-	rand.Seed(time.Now().UnixNano())
+	rand.New(rand.NewSource(time.Now().UnixNano()))
 	offset := strconv.Itoa(rand.Intn(1000))
 
 	//blogName := "mincang.tumblr.com"
@@ -47,7 +47,7 @@ func GetImageFromWeb() string {
 	defer resp.Body.Close()
 
 	data := make(map[string]interface{})
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, _ := io.ReadAll(resp.Body)
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		panic(err)
